@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mansara Taj - Authentic Chicken Biryani | Pokhara</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-red: #dc2626;
+            --primary-yellow: #fbbf24;
+            --primary-dark: #991b1b;
+        }
+        
+        /* Your existing styles... */
+        html { scroll-behavior: smooth; }
+        .nav-link { position: relative; }
+        .nav-link::after {
+            content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0;
+            background-color: white; transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+        .mobile-menu { transform: translateX(100%); transition: transform 0.3s ease-in-out; }
+        .mobile-menu.active { transform: translateX(0); }
+        .cart-modal { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .cart-modal.active { opacity: 1; pointer-events: all; }
+        .cart-content { transform: translateY(20px); transition: transform 0.3s ease; }
+        .cart-modal.active .cart-content { transform: translateY(0); }
+        .menu-item-card { transition: all 0.3s ease; }
+        .menu-item-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .offer-badge { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); }
+        }
+        .discount-shine {
+            background: linear-gradient(45deg, #dc2626, #fbbf24, #dc2626);
+            background-size: 200% 200%; animation: shine 3s ease-in-out infinite;
+        }
+        @keyframes shine {
+            0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; }
+        }
+        .loading-spinner {
+            border: 3px solid #f3f3f3; border-top: 3px solid var(--primary-red); border-radius: 50%;
+            width: 20px; height: 20px; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .whatsapp-btn { animation: float 3s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); }
+        }
+        .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        .original-price { text-decoration: line-through; color: #9ca3af; font-size: 0.9em; }
+        .discounted-price { color: #dc2626; font-weight: bold; }
+        .order-status { display: none; }
+        .order-status.active { display: block; }
+        .status-badge {
+            padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;
+            display: inline-block; margin-left: 8px;
+        }
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-preparing { background: #f3e8ff; color: #7e22ce; }
+        .status-ready { background: #dcfce7; color: #15803d; }
+        .status-delivered { background: #f1f5f9; color: #64748b; }
+        .status-cancelled { background: #fee2e2; color: #dc2626; }
+        
+        /* Sync Indicator */
+        .sync-indicator {
+            position: fixed; bottom: 20px; left: 20px; background: #10b981; color: white;
+            padding: 8px 16px; border-radius: 20px; font-size: 12px; display: flex;
+            align-items: center; gap: 8px; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(-100px); transition: transform 0.3s ease;
+        }
+        .sync-indicator.show { transform: translateX(0); }
+        .sync-indicator.syncing { background: #f59e0b; }
+        .sync-indicator.error { background: #ef4444; }
+    </style>
+</head>
+<body class="font-sans bg-white text-gray-800">
+    <!-- Sync Indicator -->
+    <div id="syncIndicator" class="sync-indicator">
+        <i class="fas fa-sync-alt">yo</i>
+        <span id="syncMessage">Syncing...</span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="w-full py-4 px-6 bg-gradient-to-r from-red-600 to-yellow-400 text-white flex justify-between items-center fixed top-0 z-50 shadow-lg">
+        <div class="text-2xl font-bold flex items-center">
+            <i class="fas fa-utensils mr-2"></i> Mansara Taj
+        </div>
+        
+        <!-- Desktop Menu -->
+        <ul class="hidden md:flex space-x-8 font-semibold">
+            <li><a href="#home" class="nav-link hover:text-white/80 transition">Home</a></li>
+            <li><a href="#menu" class="nav-link hover:text-white/80 transition">Menu</a></li>
+            <li><a href="#offers" class="nav-link hover:text-white/80 transition">Special Offers</a></li>
+            <li><a href="#about" class="nav-link hover:text-white/80 transition">About</a></li>
+            <li><a href="#contact" class="nav-link hover:text-white/80 transition">Contact</a></li>
+            <li>
+                <button id="cartIcon" class="nav-link relative hover:text-white/80 transition">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                </button>
+            </li>
+        </ul>
+        
+        <!-- Mobile Menu Button with Cart Icon -->
+        <div class="md:hidden flex items-center gap-4">
+            <button id="cartIconMobile" class="text-white text-xl relative">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cartCountMobile" class="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+            </button>
+            <button id="mobileMenuBtn" class="text-white text-xl">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu fixed inset-0 bg-red-600 z-40 flex flex-col items-center justify-center space-y-8 text-white text-xl font-semibold">
+        <button id="closeMenu" class="absolute top-6 right-6 text-2xl hover:text-yellow-300 transition">
+            <i class="fas fa-times"></i>
+        </button>
+        <a href="#home" class="nav-link hover:text-yellow-300 transition py-2">Home</a>
+        <a href="#menu" class="nav-link hover:text-yellow-300 transition py-2">Menu</a>
+        <a href="#offers" class="nav-link hover:text-yellow-300 transition py-2">Special Offers</a>
+        <a href="#about" class="nav-link hover:text-yellow-300 transition py-2">About</a>
+        <a href="#contact" class="nav-link hover:text-yellow-300 transition py-2">Contact</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="pt-24 pb-16 md:pt-32 md:pb-24 bg-gradient-to-b from-red-700 to-red-500 text-white text-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 w-20 h-20 bg-yellow-400 rounded-full animate-pulse"></div>
+            <div class="absolute top-40 right-20 w-16 h-16 bg-yellow-400 rounded-full animate-pulse" style="animation-delay: 0.5s;"></div>
+            <div class="absolute bottom-20 left-1/4 w-12 h-12 bg-yellow-400 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 fade-in">Authentic Chicken Biryani</h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto fade-in" style="transition-delay: 0.2s;">Flavorful, fresh, and made with love in Pokhara</p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center fade-in" style="transition-delay: 0.4s;">
+                <a href="#menu" class="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 px-8 rounded-full shadow-lg transition-all hover:scale-105 hover:shadow-xl">
+                    Order Now <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+                <a href="#offers" class="bg-transparent border-2 border-white hover:bg-white hover:text-red-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all">
+                    Special Offers <i class="fas fa-tag ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Special Offers Section -->
+    <section id="offers" class="py-16 bg-gradient-to-br from-red-50 to-yellow-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-red-700 mb-4 fade-in">Special Offers</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto fade-in">Don't miss our exclusive deals!</p>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-2xl overflow-hidden fade-in border-4 border-yellow-400 discount-shine">
+                    <div class="bg-gradient-to-r from-red-600 to-yellow-500 text-white p-8 text-center relative">
+                        <div class="offer-badge absolute -top-4 -right-4 bg-red-600 text-white px-6 py-3 rounded-full font-bold text-lg rotate-12 shadow-lg">
+                            FLASH SALE!
+                        </div>
+                        <h3 class="text-3xl md:text-4xl font-bold mb-3">11% OFF</h3>
+                        <p class="text-yellow-100 text-xl">On All Menu Items - No Minimum Order!</p>
+                    </div>
+                    <div class="p-8">
+                        <div class="text-center mb-6">
+                            <div class="flex justify-center items-baseline gap-4 mb-4">
+                                <span class="text-4xl font-bold text-red-600">11% OFF</span>
+                                <span class="text-2xl text-gray-400 line-through">Regular Price</span>
+                            </div>
+                            <p class="text-lg text-gray-700 mb-4">Automatically applied to all items in your order</p>
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4 inline-block">
+                                <p class="text-green-800 font-semibold">
+                                    <i class="fas fa-bolt mr-2"></i>
+                                    Example: Classic Biryani NPR 350 → Pay Only NPR 312
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div class="text-center p-4 bg-red-50 rounded-lg">
+                                <div class="text-2xl font-bold text-red-600">🎯</div>
+                                <p class="font-semibold">Applicable To</p>
+                                <p class="text-gray-600">All Menu Items</p>
+                            </div>
+                            <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                                <div class="text-2xl font-bold text-yellow-600">💰</div>
+                                <p class="font-semibold">Discount</p>
+                                <p class="text-gray-600">11% OFF</p>
+                            </div>
+                            <div class="text-center p-4 bg-green-50 rounded-lg">
+                                <div class="text-2xl font-bold text-green-600">🚚</div>
+                                <p class="font-semibold">Free Delivery</p>
+                                <p class="text-gray-600">Pokhara Valley</p>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <p class="text-gray-600 mb-4">Add items to cart and discount will be automatically applied</p>
+                            <a href="#menu" class="bg-red-600 hover:bg-red-700 text-white py-4 px-12 rounded-full font-bold text-lg transition-all hover:scale-105 hover:shadow-xl inline-flex items-center gap-3">
+                                <i class="fas fa-shopping-cart"></i>
+                                Start Ordering Now
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-red-700 mb-4 fade-in">Our Menu</h2>
+            <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto fade-in">Delicious food made with authentic recipes</p>
+            
+            <!-- Search and Filter -->
+            <div class="mb-10 fade-in">
+                <div class="max-w-md mx-auto mb-6 relative">
+                    <input type="text" id="searchInput" class="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent shadow-sm" placeholder="Search for dishes...">
+                    <i class="fas fa-search absolute right-4 top-3 text-gray-400"></i>
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-2 mb-6">
+                    <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-red-600 text-white transition" data-filter="all">All Items</button>
+                    <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 hover:bg-red-600 hover:text-white transition" data-filter="biryani">Biryani</button>
+                    <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 hover:bg-red-600 hover:text-white transition" data-filter="rice">Rice Dishes</button>
+                    <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 hover:bg-red-600 hover:text-white transition" data-filter="sides">Side Dishes</button>
+                    <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 hover:bg-red-600 hover:text-white transition" data-filter="desserts">Desserts</button>
+                    <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 hover:bg-red-600 hover:text-white transition" data-filter="beverages">Beverages</button>
+                </div>
+            </div>
+            
+            <!-- Menu Items -->
+            <div id="menuContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Menu items will be dynamically loaded here -->
+            </div>
+            
+            <!-- View Cart Button -->
+            <div class="text-center mt-12 fade-in">
+                <button id="viewCartBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-12 rounded-full shadow-lg transition-all hover:scale-105 hover:shadow-xl">
+                    View Cart & Checkout <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-red-700 mb-4 fade-in">Contact Us</h2>
+            
+            <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div class="fade-in">
+                    <h3 class="text-2xl font-bold mb-6">Get In Touch</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <i class="fas fa-map-marker-alt text-red-600 mt-1 mr-4 text-xl"></i>
+                            <div>
+                                <h4 class="font-semibold text-lg">Address</h4>
+                                <p class="text-gray-600">Jalparoad, Srijana chowk, Pokhara 33700, Nepal</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-phone text-red-600 mt-1 mr-4 text-xl"></i>
+                            <div>
+                                <h4 class="font-semibold text-lg">Phone</h4>
+                                <p class="text-gray-600">+977 9815845376</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-clock text-red-600 mt-1 mr-4 text-xl"></i>
+                            <div>
+                                <h4 class="font-semibold text-lg">Opening Hours</h4>
+                                <p class="text-gray-600">Open Daily: 10:00 AM - 10:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Google Maps -->
+                    <div class="mt-8 rounded-xl overflow-hidden shadow-lg">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3514.6798317348195!2d83.981131!3d28.222849!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3995951e16c2f4a5%3A0x4a3d6f9a5d3d3e3d!2sMansara%20Taj%20Chicken%20Biryani!5e0!3m2!1sen!2snp!4v1641234567890!5m2!1sen!2snp" 
+                            width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="mt-8 space-y-4">
+                        <a href="https://wa.me/9779815845376" target="_blank" class="flex items-center gap-4 bg-green-500 hover:bg-green-600 text-white px-6 py-4 rounded-xl transition-all hover:scale-105">
+                            <i class="fab fa-whatsapp text-2xl"></i>
+                            <div>
+                                <p class="font-semibold text-lg">Chat on WhatsApp</p>
+                                <p class="text-green-100">Quick responses</p>
+                            </div>
+                        </a>
+                        <a href="tel:+9779815845376" class="flex items-center gap-4 bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 rounded-xl transition-all hover:scale-105">
+                            <i class="fas fa-phone text-2xl"></i>
+                            <div>
+                                <p class="font-semibold text-lg">Call Us</p>
+                                <p class="text-blue-100">Immediate assistance</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Order Status Check -->
+                <div class="fade-in" style="transition-delay: 0.2s;">
+                    <h3 class="text-2xl font-bold mb-6">Check Your Order Status</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="orderIdInput" class="block text-sm font-medium text-gray-700 mb-1">Order ID</label>
+                            <input type="text" id="orderIdInput" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="Enter your order ID (e.g., MT123456)">
+                        </div>
+                        <button id="checkOrderBtn" class="bg-red-600 hover:bg-red-700 text-white py-3 px-8 rounded-lg font-semibold transition-all hover:scale-105 w-full">
+                            Check Order Status <i class="fas fa-search ml-2"></i>
+                        </button>
+                        
+                        <!-- Order Status Display -->
+                        <div id="orderStatus" class="order-status mt-6 p-4 bg-gray-50 rounded-lg border">
+                            <h4 class="font-bold text-lg mb-2">Order Status</h4>
+                            <div id="orderDetails" class="text-gray-700">
+                                <!-- Order details will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-red-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Mansara Taj</h3>
+                    <p class="text-red-200">Serving authentic chicken biryani in Pokhara since 2015.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-red-200">
+                        <li><a href="#home" class="hover:text-yellow-300 transition">Home</a></li>
+                        <li><a href="#menu" class="hover:text-yellow-300 transition">Menu</a></li>
+                        <li><a href="#offers" class="hover:text-yellow-300 transition">Special Offers</a></li>
+                        <li><a href="#about" class="hover:text-yellow-300 transition">About</a></li>
+                        <li><a href="#contact" class="hover:text-yellow-300 transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/_bymansara/" target="_blank" class="text-white hover:text-yellow-300 transition text-xl bg-red-700 hover:bg-red-600 w-10 h-10 rounded-full flex items-center justify-center">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-white hover:text-yellow-300 transition text-xl bg-red-700 hover:bg-red-600 w-10 h-10 rounded-full flex items-center justify-center">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-8 pt-8 border-t border-red-700 text-red-200">
+                <p>&copy; 2024 Mansara Taj Chicken Biryani. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Button -->
+    <div class="whatsapp-btn fixed bottom-6 right-6 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-2xl cursor-pointer z-50" onclick="window.open('https://wa.me/9779815845376', '_blank')">
+        <i class="fab fa-whatsapp text-white text-2xl"></i>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="cart-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="cart-content bg-white w-11/12 max-w-2xl rounded-2xl shadow-2xl max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center p-6 border-b">
+                <h2 class="text-2xl font-bold">Your Order</h2>
+                <button id="closeCart" class="text-gray-500 hover:text-gray-700 text-2xl transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto flex-grow">
+                <div id="cartItems">
+                    <!-- Cart items will be dynamically added here -->
+                </div>
+            </div>
+            
+            <div class="border-t p-6 bg-gray-50">
+                <div class="space-y-2 mb-4">
+                    <div class="flex justify-between">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">NPR 0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Delivery Fee:</span>
+                        <span id="delivery">NPR 0</span>
+                    </div>
+                    <div id="discountSection" class="flex justify-between text-green-600 font-semibold">
+                        <span>11% Discount:</span>
+                        <span id="discountAmount">-NPR 0</span>
+                    </div>
+                    <div class="flex justify-between text-lg font-bold">
+                        <span>Total:</span>
+                        <span id="total">NPR 0</span>
+                    </div>
+                    <div id="discountNote" class="text-sm text-green-600">
+                        <i class="fas fa-check-circle mr-1"></i> 11% discount applied on all items
+                    </div>
+                </div>
+                
+                <!-- Customer Information Form -->
+                <div class="bg-white p-4 rounded-lg border mb-4">
+                    <h3 class="font-bold mb-3 text-lg">Delivery Information</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label for="customerName" class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                            <input type="text" id="customerName" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Your full name" required>
+                        </div>
+                        <div>
+                            <label for="customerPhone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
+                            <input type="tel" id="customerPhone" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Your phone number" required>
+                        </div>
+                        <div>
+                            <label for="customerAddress" class="block text-sm font-medium text-gray-700 mb-1">Delivery Address *</label>
+                            <textarea id="customerAddress" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Your complete delivery address" required></textarea>
+                        </div>
+                        <div>
+                            <label for="customerNotes" class="block text-sm font-medium text-gray-700 mb-1">Special Instructions</label>
+                            <textarea id="customerNotes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Any special requests or instructions"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="checkoutBtn" class="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-lg font-bold transition flex items-center justify-center gap-2 text-lg">
+                    <i class="fab fa-whatsapp"></i> Order via WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CLOUD SYNC CONFIGURATION ====================
+        // 🔑 REPLACE THESE WITH YOUR ACTUAL JSONBIN.IO CREDENTIALS
+        const JSONBIN_CONFIG = {
+            BIN_ID: '68f0b56b43b1c97be96aee74', // Your Bin ID from JSONBin.io
+            API_KEY: '$2a$10$PAVuboENhJZw2YHFfJhiuuNqatCmpYi4aDXdeBdcqk/2aX9ZEZc5m', // Your API Key from JSONBin.io
+            BASE_URL: 'https://api.jsonbin.io/v3/b'
+        };
+
+        // ==================== CLOUD SYNC FUNCTIONS ====================
+        async function syncWithCloud() {
+            showSyncIndicator('Syncing orders...', 'syncing');
+            
+            try {
+                // Get local orders
+                const localOrders = JSON.parse(localStorage.getItem('mansaraTajOrders')) || [];
+                
+                // Get cloud data
+                const cloudData = await getDataFromCloud();
+                const cloudOrders = cloudData?.orders || [];
+                
+                // Merge orders (cloud has priority)
+                const mergedOrders = mergeOrders(localOrders, cloudOrders);
+                
+                // Save to local storage
+                localStorage.setItem('mansaraTajOrders', JSON.stringify(mergedOrders));
+                
+                // Save to cloud if there are changes
+                if (JSON.stringify(mergedOrders) !== JSON.stringify(cloudOrders)) {
+                    await saveDataToCloud({
+                        orders: mergedOrders,
+                        restaurant: "Mansara Taj Pokhara",
+                        lastSync: new Date().toISOString(),
+                        totalOrders: mergedOrders.length
+                    });
+                    showSyncIndicator(`${mergedOrders.length} orders synced`, 'success');
+                } else {
+                    showSyncIndicator('Already up to date', 'success');
+                }
+                
+                return mergedOrders;
+                
+            } catch (error) {
+                console.error('Cloud sync failed:', error);
+                showSyncIndicator('Sync failed', 'error');
+                return JSON.parse(localStorage.getItem('mansaraTajOrders')) || [];
+            }
+        }
+
+        async function getDataFromCloud() {
+            try {
+                const response = await fetch(`${JSONBIN_CONFIG.BASE_URL}/${JSONBIN_CONFIG.BIN_ID}/latest`, {
+                    headers: {
+                        'X-Master-Key': JSONBIN_CONFIG.API_KEY
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Failed to fetch from cloud');
+                
+                const data = await response.json();
+                return data.record;
+            } catch (error) {
+                console.warn('Could not fetch from cloud:', error);
+                return null;
+            }
+        }
+
+        async function saveDataToCloud(data) {
+            try {
+                const response = await fetch(`${JSONBIN_CONFIG.BASE_URL}/${JSONBIN_CONFIG.BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'X-Master-Key': JSONBIN_CONFIG.API_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) throw new Error('Failed to save to cloud');
+                
+                return await response.json();
+            } catch (error) {
+                console.error('Failed to save to cloud:', error);
+                throw error;
+            }
+        }
+
+        function mergeOrders(localOrders, cloudOrders) {
+            const orderMap = new Map();
+            
+            // Add cloud orders first (priority)
+            cloudOrders.forEach(order => {
+                if (order.id) orderMap.set(order.id, order);
+            });
+            
+            // Add local orders if not in cloud
+            localOrders.forEach(order => {
+                if (order.id && !orderMap.has(order.id)) {
+                    orderMap.set(order.id, order);
+                }
+            });
+            
+            return Array.from(orderMap.values()).sort((a, b) => 
+                new Date(b.timestamp) - new Date(a.timestamp)
+            );
+        }
+
+        function showSyncIndicator(message, type = 'syncing') {
+            const indicator = document.getElementById('syncIndicator');
+            const messageEl = document.getElementById('syncMessage');
+            
+            messageEl.textContent = message;
+            indicator.className = 'sync-indicator show';
+            
+            if (type === 'success') {
+                indicator.style.background = '#10b981';
+            } else if (type === 'error') {
+                indicator.style.background = '#ef4444';
+            } else {
+                indicator.style.background = '#f59e0b';
+            }
+            
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 3000);
+        }
+
+        // ==================== ORDER TRACKING ====================
+        async function checkOrderStatus() {
+            const orderIdInput = document.getElementById('orderIdInput');
+            const orderId = orderIdInput.value.trim();
+            const orderStatus = document.getElementById('orderStatus');
+            const orderDetails = document.getElementById('orderDetails');
+            
+            if (!orderId) {
+                alert('Please enter your order ID');
+                return;
+            }
+            
+            const checkOrderBtn = document.getElementById('checkOrderBtn');
+            const originalText = checkOrderBtn.innerHTML;
+            checkOrderBtn.innerHTML = '<div class="loading-spinner"></div> Checking...';
+            checkOrderBtn.disabled = true;
+            
+            try {
+                const orders = await syncWithCloud();
+                const order = orders.find(o => o.id === orderId);
+                
+                setTimeout(() => {
+                    checkOrderBtn.innerHTML = originalText;
+                    checkOrderBtn.disabled = false;
+                    
+                    if (order) {
+                        displayOrderDetails(order, orderDetails);
+                    } else {
+                        showOrderNotFound(orderDetails);
+                    }
+                    
+                    orderStatus.classList.add('active');
+                }, 1000);
+                
+            } catch (error) {
+                checkOrderBtn.innerHTML = originalText;
+                checkOrderBtn.disabled = false;
+                alert('Failed to check order status');
+            }
+        }
+
+        function displayOrderDetails(order, orderDetails) {
+            const itemsHtml = order.items.map(item => 
+                `<div class="flex justify-between text-sm py-1">
+                    <span>${item.name} x ${item.quantity}</span>
+                    <span>NPR ${item.price * item.quantity}</span>
+                </div>`
+            ).join('');
+            
+            const statusText = getStatusText(order.status);
+            const statusClass = `status-${order.status}`;
+            
+            orderDetails.innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span><strong>Order ID:</strong> ${order.id}</span>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </div>
+                    <div><strong>Customer:</strong> ${order.customerName}</div>
+                    <div><strong>Phone:</strong> ${order.phone}</div>
+                    <div><strong>Address:</strong> ${order.address}</div>
+                    <div class="border-t pt-2">
+                        <strong>Order Items:</strong>
+                        ${itemsHtml}
+                        <div class="flex justify-between font-bold border-t mt-2 pt-2">
+                            <span>Total:</span>
+                            <span>NPR ${order.total}</span>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <strong>Order Time:</strong> ${formatOrderTime(order.timestamp)}
+                    </div>
+                    <div class="mt-4 p-3 bg-blue-50 rounded-lg text-sm">
+                        <i class="fas fa-info-circle mr-2 text-blue-500"></i>
+                        ${getStatusMessage(order.status)}
+                    </div>
+                </div>
+            `;
+        }
+
+        function showOrderNotFound(orderDetails) {
+            orderDetails.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="fas fa-search text-3xl text-gray-300 mb-2"></i>
+                    <p class="text-gray-600">Order not found</p>
+                    <p class="text-sm text-gray-500 mt-1">Please check your order ID</p>
+                </div>
+            `;
+        }
+
+        // ==================== APP INITIALIZATION ====================
+        async function initializeApp() {
+            // Initial sync
+            await syncWithCloud();
+            
+            // Set up periodic sync (every 2 minutes)
+            setInterval(syncWithCloud, 2 * 60 * 1000);
+            
+            // Initialize the rest of the app
+            const savedCart = localStorage.getItem('mansaraTajCart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+                updateCartDisplay();
+            }
+            
+            renderMenuItems();
+            setupEventListeners();
+            setTimeout(initAnimations, 100);
+        }
+
+        // ==================== YOUR EXISTING APP CODE ====================
+        const menuData = [
+            { id: 1, name: "Classic Chicken Biryani", price: 350, category: "biryani", image: "https://images.unsplash.com/photo-1601050697523-ec92b7f1ecaa?auto=format&fit=crop&w=600&q=80", description: "Traditional biryani with aromatic spices and tender chicken", popular: true },
+            { id: 2, name: "Spicy Chicken Biryani", price: 380, category: "biryani", image: "https://images.unsplash.com/photo-1589308078052-1c5406c3e1c2?auto=format&fit=crop&w=600&q=80", description: "Extra spicy version for those who love heat", popular: true },
+            { id: 3, name: "Hyderabadi Chicken Biryani", price: 420, category: "biryani", image: "https://images.unsplash.com/photo-1563379091339-03246963d96f?auto=format&fit=crop&w=600&q=80", description: "Authentic Hyderabadi style with rich flavors", popular: true },
+            { id: 4, name: "Vegetable Pulao", price: 250, category: "rice", image: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=600&q=80", description: "Fragrant rice with mixed vegetables", popular: false },
+            { id: 5, name: "Chicken Pulao", price: 320, category: "rice", image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=600&q=80", description: "Rice cooked with chicken and mild spices", popular: true },
+            { id: 6, name: "Raita", price: 80, category: "sides", image: "https://images.unsplash.com/photo-1604323682670-c0cbc2c1498d?auto=format&fit=crop&w=600&q=80", description: "Yogurt with cucumber and spices", popular: true },
+            { id: 7, name: "Fresh Salad", price: 70, category: "sides", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80", description: "Mixed vegetables with lemon dressing", popular: false },
+            { id: 8, name: "Gulab Jamun", price: 120, category: "desserts", image: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=600&q=80", description: "Sweet milk dumplings in sugar syrup", popular: true },
+            { id: 9, name: "Kheer", price: 100, category: "desserts", image: "https://images.unsplash.com/photo-1548365324-2d2527e5a620?auto=format&fit=crop&w=600&q=80", description: "Rice pudding with nuts and cardamom", popular: false },
+            { id: 10, name: "Mango Lassi", price: 120, category: "beverages", image: "https://images.unsplash.com/photo-1629367494173-c78a56567877?auto=format&fit=crop&w=600&q=80", description: "Refreshing yogurt drink with mango", popular: true },
+            { id: 11, name: "Masala Chai", price: 60, category: "beverages", image: "https://images.unsplash.com/photo-1571934811356-5cc061b6821f?auto=format&fit=crop&w=600&q=80", description: "Spiced Indian tea", popular: false }
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('mansaraTajCart')) || [];
+        let currentFilter = "all";
+        let currentSearch = "";
+
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        // Helper functions
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': 'Pending', 'preparing': 'Preparing', 'ready': 'Ready for Delivery',
+                'delivered': 'Delivered', 'cancelled': 'Cancelled'
+            };
+            return statusMap[status] || status;
+        }
+
+        function getStatusMessage(status) {
+            const messages = {
+                'pending': 'Your order has been received and is waiting to be processed.',
+                'preparing': 'Your order is being prepared in our kitchen. Estimated delivery time: 30-45 minutes.',
+                'ready': 'Your order is ready and will be delivered soon. Please be available to receive your order.',
+                'delivered': 'Your order has been delivered. Thank you for choosing Mansara Taj!',
+                'cancelled': 'This order has been cancelled. Please contact us if you have any questions.'
+            };
+            return messages[status] || 'Checking order status...';
+        }
+
+        function formatOrderTime(timestamp) {
+            return new Date(timestamp).toLocaleString('en-US', {
+                year: 'numeric', month: 'short', day: 'numeric',
+                hour: '2-digit', minute: '2-digit', hour12: true
+            });
+        }
+
+        function showNotification(message) {
+            alert(message);
+        }
+
+        // Your existing functions
+        function setupEventListeners() {
+            // Mobile menu
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const closeMenu = document.getElementById('closeMenu');
+
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+
+            closeMenu.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+
+            // Cart
+            const cartIcon = document.getElementById('cartIcon');
+            const cartIconMobile = document.getElementById('cartIconMobile');
+            const cartModal = document.getElementById('cartModal');
+            const closeCart = document.getElementById('closeCart');
+            const viewCartBtn = document.getElementById('viewCartBtn');
+
+            cartIcon.addEventListener('click', openCart);
+            cartIconMobile.addEventListener('click', openCart);
+            viewCartBtn.addEventListener('click', openCart);
+            closeCart.addEventListener('click', () => {
+                cartModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+
+            // Order check
+            const checkOrderBtn = document.getElementById('checkOrderBtn');
+            checkOrderBtn.addEventListener('click', checkOrderStatus);
+
+            // Filters and search
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    filterButtons.forEach(btn => {
+                        btn.classList.remove('bg-red-600', 'text-white');
+                        btn.classList.add('hover:bg-red-600', 'hover:text-white');
+                    });
+                    this.classList.add('bg-red-600', 'text-white');
+                    this.classList.remove('hover:bg-red-600', 'hover:text-white');
+                    currentFilter = this.getAttribute('data-filter');
+                    renderMenuItems();
+                });
+            });
+
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                currentSearch = this.value.toLowerCase();
+                renderMenuItems();
+            });
+
+            // Checkout
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            checkoutBtn.addEventListener('click', processCheckout);
+        }
+
+        function renderMenuItems() {
+            const menuContainer = document.getElementById('menuContainer');
+            menuContainer.innerHTML = '';
+            
+            let filteredItems = menuData.filter(item => {
+                if (currentFilter !== 'all' && item.category !== currentFilter) return false;
+                if (currentSearch && !item.name.toLowerCase().includes(currentSearch)) return false;
+                return true;
+            });
+            
+            if (filteredItems.length === 0) {
+                menuContainer.innerHTML = `
+                    <div class="col-span-3 text-center py-12">
+                        <i class="fas fa-search text-5xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-500">No items found</h3>
+                        <p class="text-gray-400 mt-2">Try adjusting your search or filter criteria</p>
+                    </div>
+                `;
+            } else {
+                filteredItems.forEach(item => {
+                    const discountedPrice = Math.round(item.price * 0.89);
+                    let badges = '';
+                    if (item.popular) {
+                        badges = '<div class="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold">Popular</div>';
+                    }
+                    badges += '<div class="absolute top-4 right-4 bg-green-600 text-white px-3 py-1 rounded-full text-xs font-bold">11% OFF</div>';
+                    
+                    const menuItem = document.createElement('div');
+                    menuItem.className = 'menu-item-card bg-white rounded-2xl shadow-lg overflow-hidden fade-in';
+                    menuItem.innerHTML = `
+                        <div class="relative">
+                            <img src="${item.image}" alt="${item.name}" class="w-full h-48 object-cover">
+                            ${badges}
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">${item.name}</h3>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="original-price">NPR ${item.price}</span>
+                                <span class="discounted-price text-lg">NPR ${discountedPrice}</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mb-4">${item.description}</p>
+                            <button onclick="addToCart(${item.id})" class="w-full bg-yellow-400 hover:bg-yellow-500 text-black py-3 px-4 rounded-xl font-semibold transition-all hover:scale-105">
+                                Add to Cart <i class="fas fa-plus ml-1"></i>
+                            </button>
+                        </div>
+                    `;
+                    menuContainer.appendChild(menuItem);
+                });
+            }
+            
+            setTimeout(() => {
+                document.querySelectorAll('.fade-in').forEach(el => {
+                    if (el.getBoundingClientRect().top < window.innerHeight) {
+                        el.classList.add('visible');
+                    }
+                });
+            }, 100);
+        }
+
+        function initAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Cart functions
+        function addToCart(itemId) {
+            const item = menuData.find(menuItem => menuItem.id === itemId);
+            const existingItem = cart.find(cartItem => cartItem.id === itemId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ id: item.id, name: item.name, price: item.price, quantity: 1 });
+            }
+            
+            updateCartDisplay();
+            showNotification(`${item.name} added to cart!`);
+        }
+
+        function updateCartDisplay() {
+            const cartCount = document.getElementById('cartCount');
+            const cartCountMobile = document.getElementById('cartCountMobile');
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            
+            cartCount.textContent = totalItems;
+            cartCountMobile.textContent = totalItems;
+            localStorage.setItem('mansaraTajCart', JSON.stringify(cart));
+            
+            if (document.getElementById('cartModal').classList.contains('active')) {
+                renderCartItems();
+            }
+        }
+
+        function renderCartItems() {
+            const cartItems = document.getElementById('cartItems');
+            cartItems.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-shopping-cart text-4xl mb-3 text-gray-300"></i>
+                        <p class="text-lg">Your cart is empty</p>
+                        <p class="text-sm mt-2">Add some delicious items to get started!</p>
+                    </div>
+                `;
+            } else {
+                cart.forEach((item, index) => {
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'flex justify-between items-center py-4 border-b';
+                    cartItem.innerHTML = `
+                        <div class="flex-1">
+                            <h4 class="font-semibold">${item.name}</h4>
+                            <div class="flex items-center gap-2">
+                                <span class="text-gray-600 original-price">NPR ${item.price}</span>
+                                <span class="text-green-600 font-semibold">→ NPR ${Math.round(item.price * 0.89)}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button class="quantity-btn w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-red-600 hover:text-white transition" onclick="updateQuantity(${index}, ${item.quantity - 1})">-</button>
+                            <span class="font-semibold">${item.quantity}</span>
+                            <button class="quantity-btn w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-red-600 hover:text-white transition" onclick="updateQuantity(${index}, ${item.quantity + 1})">+</button>
+                            <button class="text-red-500 hover:text-red-700" onclick="removeFromCart(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    cartItems.appendChild(cartItem);
+                });
+            }
+            
+            const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            const discount = Math.round(subtotal * 0.11);
+            const total = subtotal - discount;
+            
+            document.getElementById('subtotal').textContent = `NPR ${subtotal}`;
+            document.getElementById('discountAmount').textContent = `-NPR ${discount}`;
+            document.getElementById('total').textContent = `NPR ${total}`;
+        }
+
+        function updateQuantity(index, newQuantity) {
+            if (newQuantity <= 0) {
+                removeFromCart(index);
+            } else {
+                cart[index].quantity = newQuantity;
+                updateCartDisplay();
+            }
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartDisplay();
+        }
+
+        function openCart() {
+            document.getElementById('cartModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            renderCartItems();
+        }
+
+        async function processCheckout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            const customerName = document.getElementById('customerName').value;
+            const customerPhone = document.getElementById('customerPhone').value;
+            const customerAddress = document.getElementById('customerAddress').value;
+            
+            if (!customerName || !customerPhone || !customerAddress) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            const originalText = checkoutBtn.innerHTML;
+            checkoutBtn.innerHTML = '<div class="loading-spinner"></div> Processing...';
+            checkoutBtn.disabled = true;
+            
+            const orderId = 'MT' + Date.now().toString().slice(-6);
+            const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            const discount = Math.round(subtotal * 0.11);
+            const total = subtotal - discount;
+            
+            let orderMessage = "Hello Mansara Taj, I want to place an order:\n\n";
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                const discountedItemTotal = Math.round(itemTotal * 0.89);
+                orderMessage += `${item.name} x ${item.quantity} = NPR ${discountedItemTotal}\n`;
+            });
+            
+            orderMessage += `\nSubtotal: NPR ${subtotal}`;
+            orderMessage += `\n11% Discount: -NPR ${discount}`;
+            orderMessage += `\nTotal: NPR ${total}`;
+            orderMessage += `\n\nOrder ID: ${orderId}`;
+            orderMessage += `\nCustomer Information:\n`;
+            orderMessage += `Name: ${customerName}\n`;
+            orderMessage += `Phone: ${customerPhone}\n`;
+            orderMessage += `Address: ${customerAddress}\n`;
+            
+            const customerNotes = document.getElementById('customerNotes').value;
+            if (customerNotes) orderMessage += `Special Instructions: ${customerNotes}\n`;
+            
+            orderMessage += "\nPlease confirm my order. Thank you!";
+            
+            // Create order object for cloud sync
+            const newOrder = {
+                id: orderId,
+                customerName: customerName,
+                phone: customerPhone,
+                address: customerAddress,
+                items: cart.map(item => ({
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity
+                })),
+                total: total,
+                status: 'pending',
+                timestamp: new Date().toISOString(),
+                notes: customerNotes || ''
+            };
+            
+            // Save order locally and sync to cloud
+            const currentOrders = JSON.parse(localStorage.getItem('mansaraTajOrders')) || [];
+            currentOrders.unshift(newOrder);
+            localStorage.setItem('mansaraTajOrders', JSON.stringify(currentOrders));
+            
+            // Sync to cloud
+            await syncWithCloud();
+            
+            // Open WhatsApp
+            window.open(`https://wa.me/9779815845376?text=${encodeURIComponent(orderMessage)}`, '_blank');
+            
+            setTimeout(() => {
+                checkoutBtn.innerHTML = originalText;
+                checkoutBtn.disabled = false;
+                document.getElementById('cartModal').classList.remove('active');
+                document.body.style.overflow = 'auto';
+                cart = [];
+                updateCartDisplay();
+                document.getElementById('customerName').value = '';
+                document.getElementById('customerPhone').value = '';
+                document.getElementById('customerAddress').value = '';
+                document.getElementById('customerNotes').value = '';
+                showNotification(`Order #${orderId} placed successfully!`);
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
