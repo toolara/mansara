@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mansara Taj - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Your existing admin dashboard styles... */
+        .order-card { transition: all 0.3s ease; border-left: 4px solid; }
+        .order-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .status-pending { border-left-color: #f59e0b; background: #fffbeb; }
+        .status-confirmed { border-left-color: #3b82f6; background: #eff6ff; }
+        .status-preparing { border-left-color: #8b5cf6; background: #faf5ff; }
+        .status-ready { border-left-color: #10b981; background: #ecfdf5; }
+        .status-delivered { border-left-color: #6b7280; background: #f9fafb; }
+        .status-cancelled { border-left-color: #ef4444; background: #fef2f2; }
+        
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .badge-pending { background: #fef3c7; color: #d97706; }
+        .badge-confirmed { background: #dbeafe; color: #1d4ed8; }
+        .badge-preparing { background: #f3e8ff; color: #7e22ce; }
+        .badge-ready { background: #dcfce7; color: #15803d; }
+        .badge-delivered { background: #f1f5f9; color: #64748b; }
+        .badge-cancelled { background: #fee2e2; color: #dc2626; }
+        
+        .login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            display: flex; align-items: center; justify-content: center; z-index: 1000;
+        }
+        
+        .shake { animation: shake 0.5s ease-in-out; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .notification {
+            position: fixed; top: 20px; right: 20px; background: white;
+            padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000; transform: translateX(400px); transition: transform 0.3s ease;
+            border-left: 4px solid #10b981;
+        }
+        .notification.show { transform: translateX(0); }
+        
+        .stats-card { transition: transform 0.3s ease; }
+        .stats-card:hover { transform: translateY(-2px); }
+        
+        /* Sync Indicator for Admin */
+        .sync-indicator {
+            position: fixed; bottom: 20px; left: 20px; background: #10b981; color: white;
+            padding: 8px 16px; border-radius: 20px; font-size: 12px; display: flex;
+            align-items: center; gap: 8px; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(-100px); transition: transform 0.3s ease;
+        }
+        .sync-indicator.show { transform: translateX(0); }
+        .sync-indicator.syncing { background: #f59e0b; }
+        .sync-indicator.error { background: #ef4444; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Sync Indicator -->
+    <div id="syncIndicator" class="sync-indicator">
+        <i class="fas fa-sync-alt"></i>
+        <span id="syncMessage">Syncing...</span>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 shadow-2xl">
+            <div class="text-center mb-6">
+                <i class="fas fa-utensils text-red-600 text-4xl mb-3"></i>
+                <h1 class="text-2xl font-bold text-gray-800">Mansara Taj Admin</h1>
+                <p class="text-gray-600 mt-2">Enter password to access dashboard</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" id="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="Enter admin password" required autocomplete="off">
+                </div>
+                
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold transition duration-200">
+                    Access Dashboard
+                </button>
+            </form>
+            
+            <div id="loginError" class="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm hidden">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                <span id="errorMessage">Incorrect password</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div id="dashboardContent" class="hidden">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-red-600 to-yellow-400 text-white shadow-lg">
+            <div class="container mx-auto px-4 py-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold"><i class="fas fa-utensils mr-2"></i>Mansara Taj - Order Manager</h1>
+                        <p class="text-red-100">Manage your WhatsApp orders efficiently</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xl font-bold" id="currentTime"></p>
+                        <p class="text-red-100" id="orderCount">0 Orders Today</p>
+                        <div class="flex gap-2 mt-2">
+                            <button onclick="syncWithCloud()" class="text-sm bg-green-600 hover:bg-green-700 px-3 py-1 rounded transition">
+                                <i class="fas fa-sync-alt mr-1"></i>Sync Now
+                            </button>
+                            <button onclick="logout()" class="text-sm bg-red-800 hover:bg-red-900 px-3 py-1 rounded transition">
+                                <i class="fas fa-sign-out-alt mr-1"></i>Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Section -->
+        <section class="bg-white shadow-sm">
+            <div class="container mx-auto px-4 py-6">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div class="stats-card text-center p-4 bg-red-50 rounded-lg">
+                        <div class="text-2xl font-bold text-red-600" id="totalOrders">0</div>
+                        <div class="text-gray-600">Total Orders</div>
+                    </div>
+                    <div class="stats-card text-center p-4 bg-blue-50 rounded-lg">
+                        <div class="text-2xl font-bold text-blue-600" id="pendingOrders">0</div>
+                        <div class="text-gray-600">Pending</div>
+                    </div>
+                    <div class="stats-card text-center p-4 bg-purple-50 rounded-lg">
+                        <div class="text-2xl font-bold text-purple-600" id="preparingOrders">0</div>
+                        <div class="text-gray-600">Preparing</div>
+                    </div>
+                    <div class="stats-card text-center p-4 bg-green-50 rounded-lg">
+                        <div class="text-2xl font-bold text-green-600" id="readyOrders">0</div>
+                        <div class="text-gray-600">Ready</div>
+                    </div>
+                    <div class="stats-card text-center p-4 bg-yellow-50 rounded-lg">
+                        <div class="text-2xl font-bold text-yellow-600" id="todayRevenue">NPR 0</div>
+                        <div class="text-gray-600">Today's Revenue</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <div class="container mx-auto px-4 py-8">
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap gap-4 mb-6">
+                <button onclick="addManualOrder()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+                    <i class="fas fa-plus"></i> Add Manual Order
+                </button>
+                <button onclick="markAllPreparing()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+                    <i class="fas fa-utensils"></i> Mark All as Preparing
+                </button>
+                <button onclick="exportOrders()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+                    <i class="fas fa-download"></i> Export Orders
+                </button>
+                <button onclick="clearAllOrders()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+                    <i class="fas fa-trash"></i> Clear All
+                </button>
+            </div>
+
+            <!-- Orders Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Pending Orders -->
+                <div>
+                    <h2 class="text-xl font-bold mb-4 text-orange-600 flex items-center gap-2">
+                        <i class="fas fa-clock"></i> Pending Orders
+                        <span class="badge badge-pending" id="pendingCount">0</span>
+                    </h2>
+                    <div id="pendingOrdersContainer" class="space-y-4">
+                        <!-- Orders will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- In Progress -->
+                <div>
+                    <h2 class="text-xl font-bold mb-4 text-blue-600 flex items-center gap-2">
+                        <i class="fas fa-utensils"></i> In Progress
+                        <span class="badge badge-preparing" id="preparingCount">0</span>
+                    </h2>
+                    <div id="preparingOrdersContainer" class="space-y-4">
+                        <!-- Orders will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Ready for Delivery -->
+                <div class="lg:col-span-2">
+                    <h2 class="text-xl font-bold mb-4 text-green-600 flex items-center gap-2">
+                        <i class="fas fa-motorcycle"></i> Ready for Delivery
+                        <span class="badge badge-ready" id="readyCount">0</span>
+                    </h2>
+                    <div id="readyOrdersContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Orders will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Completed Orders -->
+            <div class="mt-12">
+                <h2 class="text-xl font-bold mb-4 text-gray-600 flex items-center gap-2">
+                    <i class="fas fa-history"></i> Recent Completed Orders
+                </h2>
+                <div id="completedOrdersContainer" class="space-y-4">
+                    <!-- Completed orders will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Manual Order Modal -->
+        <div id="manualOrderModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                <h3 class="text-xl font-bold mb-4">Add Manual Order</h3>
+                <form id="manualOrderForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Customer Name</label>
+                        <input type="text" id="manualName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                        <input type="tel" id="manualPhone" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                        <textarea id="manualAddress" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" required></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Order Items</label>
+                        <textarea id="manualItems" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Example: Classic Chicken Biryani x 1, Raita x 1" required></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Total Amount (NPR)</label>
+                        <input type="number" id="manualTotal" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                    </div>
+                    <div class="flex gap-3 pt-4">
+                        <button type="button" onclick="closeManualOrder()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-lg transition">Cancel</button>
+                        <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition">Add Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <div class="flex items-center gap-3">
+            <i class="fas fa-check-circle text-green-500 text-xl"></i>
+            <div>
+                <p class="font-semibold" id="notificationTitle">Success</p>
+                <p id="notificationMessage">Order updated successfully</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CLOUD SYNC CONFIGURATION ====================
+        // 🔑 MUST BE THE SAME AS WEBSITE CONFIGURATION
+        const JSONBIN_CONFIG = {
+            BIN_ID: '68f0b56b43b1c97be96aee74', // SAME AS WEBSITE
+            API_KEY: '$2a$10$PAVuboENhJZw2YHFfJhiuuNqatCmpYi4aDXdeBdcqk/2aX9ZEZc5m', // SAME AS WEBSITE
+            BASE_URL: 'https://api.jsonbin.io/v3/b'
+        };
+
+        // ==================== CLOUD SYNC FUNCTIONS ====================
+        async function syncWithCloud() {
+            showSyncIndicator('Syncing with cloud...', 'syncing');
+            
+            try {
+                // Get local orders
+                const localOrders = JSON.parse(localStorage.getItem('mansaraTajOrders')) || [];
+                
+                // Get cloud data
+                const cloudData = await getDataFromCloud();
+                const cloudOrders = cloudData?.orders || [];
+                
+                // Merge orders (cloud has priority)
+                const mergedOrders = mergeOrders(localOrders, cloudOrders);
+                
+                // Save to local storage
+                localStorage.setItem('mansaraTajOrders', JSON.stringify(mergedOrders));
+                
+                // Save to cloud if there are changes
+                if (JSON.stringify(mergedOrders) !== JSON.stringify(cloudOrders)) {
+                    await saveDataToCloud({
+                        orders: mergedOrders,
+                        restaurant: "Mansara Taj Pokhara",
+                        lastSync: new Date().toISOString(),
+                        totalOrders: mergedOrders.length
+                    });
+                    showSyncIndicator(`${mergedOrders.length} orders synced`, 'success');
+                    
+                    // Refresh the display
+                    renderOrders();
+                    updateStats();
+                } else {
+                    showSyncIndicator('Already up to date', 'success');
+                }
+                
+                return mergedOrders;
+                
+            } catch (error) {
+                console.error('Cloud sync failed:', error);
+                showSyncIndicator('Sync failed', 'error');
+                return JSON.parse(localStorage.getItem('mansaraTajOrders')) || [];
+            }
+        }
+
+        async function getDataFromCloud() {
+            try {
+                const response = await fetch(`${JSONBIN_CONFIG.BASE_URL}/${JSONBIN_CONFIG.BIN_ID}/latest`, {
+                    headers: {
+                        'X-Master-Key': JSONBIN_CONFIG.API_KEY
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Failed to fetch from cloud');
+                
+                const data = await response.json();
+                return data.record;
+            } catch (error) {
+                console.warn('Could not fetch from cloud:', error);
+                return null;
+            }
+        }
+
+        async function saveDataToCloud(data) {
+            try {
+                const response = await fetch(`${JSONBIN_CONFIG.BASE_URL}/${JSONBIN_CONFIG.BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'X-Master-Key': JSONBIN_CONFIG.API_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) throw new Error('Failed to save to cloud');
+                
+                return await response.json();
+            } catch (error) {
+                console.error('Failed to save to cloud:', error);
+                throw error;
+            }
+        }
+
+        function mergeOrders(localOrders, cloudOrders) {
+            const orderMap = new Map();
+            
+            // Add cloud orders first (priority)
+            cloudOrders.forEach(order => {
+                if (order.id) orderMap.set(order.id, order);
+            });
+            
+            // Add local orders if not in cloud
+            localOrders.forEach(order => {
+                if (order.id && !orderMap.has(order.id)) {
+                    orderMap.set(order.id, order);
+                }
+            });
+            
+            return Array.from(orderMap.values()).sort((a, b) => 
+                new Date(b.timestamp) - new Date(a.timestamp)
+            );
+        }
+
+        function showSyncIndicator(message, type = 'syncing') {
+            const indicator = document.getElementById('syncIndicator');
+            const messageEl = document.getElementById('syncMessage');
+            
+            messageEl.textContent = message;
+            indicator.className = 'sync-indicator show';
+            
+            if (type === 'success') {
+                indicator.style.background = '#10b981';
+            } else if (type === 'error') {
+                indicator.style.background = '#ef4444';
+            } else {
+                indicator.style.background = '#f59e0b';
+            }
+            
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 3000);
+        }
+
+        // ==================== YOUR EXISTING ADMIN CODE ====================
+        // SECURE PASSWORD SYSTEM
+        const ALLOWED_PASSWORD_HASHES = [
+            "2ca3fb71c378d9d85628788490eb872077fee12b0c0a6fe1bc2d346d163a5d3d", // "hello"
+            "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5"  // "12345"
+        ];
+
+        // Sample orders data
+        let orders = JSON.parse(localStorage.getItem('mansaraTajOrders')) || [];
+
+        // Password hashing function
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hash))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+        }
+
+        // Login System
+        async function login(event) {
+            event.preventDefault();
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
+            
+            try {
+                const hashedPassword = await hashPassword(password);
+                
+                if (ALLOWED_PASSWORD_HASHES.includes(hashedPassword)) {
+                    sessionStorage.setItem('mansaraTajLoggedIn', 'true');
+                    sessionStorage.setItem('loginTime', Date.now().toString());
+                    showDashboard();
+                } else {
+                    showLoginError('Incorrect password');
+                }
+            } catch (error) {
+                showLoginError('Login failed. Please try again.');
+            }
+        }
+
+        function showLoginError(message) {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.classList.remove('hidden');
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('password').classList.add('shake');
+            document.getElementById('password').value = '';
+            
+            setTimeout(() => {
+                document.getElementById('password').classList.remove('shake');
+            }, 500);
+        }
+
+        function checkLogin() {
+            const isLoggedIn = sessionStorage.getItem('mansaraTajLoggedIn');
+            const loginTime = sessionStorage.getItem('loginTime');
+            
+            if (isLoggedIn === 'true' && loginTime) {
+                const eightHours = 8 * 60 * 60 * 1000;
+                if (Date.now() - parseInt(loginTime) < eightHours) {
+                    showDashboard();
+                } else {
+                    logout();
+                }
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem('mansaraTajLoggedIn');
+            sessionStorage.removeItem('loginTime');
+            location.reload();
+        }
+
+        async function showDashboard() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboardContent').classList.remove('hidden');
+            
+            // Initial cloud sync
+            await syncWithCloud();
+            initDashboard();
+        }
+
+        // Dashboard functionality
+        function initDashboard() {
+            updateStats();
+            renderOrders();
+            updateTime();
+            
+            // Set up periodic sync (every 2 minutes)
+            setInterval(syncWithCloud, 2 * 60 * 1000);
+            setInterval(updateTime, 60000);
+        }
+
+        function updateStats() {
+            const today = new Date().toDateString();
+            const todayOrders = orders.filter(order => 
+                new Date(order.timestamp).toDateString() === today
+            );
+            
+            const pending = orders.filter(o => o.status === 'pending').length;
+            const preparing = orders.filter(o => o.status === 'preparing').length;
+            const ready = orders.filter(o => o.status === 'ready').length;
+            const totalRevenue = todayOrders.reduce((sum, order) => sum + order.total, 0);
+            
+            document.getElementById('totalOrders').textContent = orders.length;
+            document.getElementById('pendingOrders').textContent = pending;
+            document.getElementById('preparingOrders').textContent = preparing;
+            document.getElementById('readyOrders').textContent = ready;
+            document.getElementById('todayRevenue').textContent = `NPR ${totalRevenue}`;
+            document.getElementById('orderCount').textContent = `${todayOrders.length} Orders Today`;
+            
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('preparingCount').textContent = preparing;
+            document.getElementById('readyCount').textContent = ready;
+        }
+
+        function renderOrders() {
+            // Update orders from localStorage (synced with cloud)
+            orders = JSON.parse(localStorage.getItem('mansaraTajOrders')) || [];
+            
+            const pendingContainer = document.getElementById('pendingOrdersContainer');
+            const preparingContainer = document.getElementById('preparingOrdersContainer');
+            const readyContainer = document.getElementById('readyOrdersContainer');
+            const completedContainer = document.getElementById('completedOrdersContainer');
+            
+            pendingContainer.innerHTML = '';
+            preparingContainer.innerHTML = '';
+            readyContainer.innerHTML = '';
+            completedContainer.innerHTML = '';
+            
+            const sortedOrders = [...orders].sort((a, b) => 
+                new Date(b.timestamp) - new Date(a.timestamp)
+            );
+            
+            sortedOrders.forEach(order => {
+                const orderElement = createOrderCard(order);
+                
+                switch(order.status) {
+                    case 'pending':
+                        pendingContainer.appendChild(orderElement);
+                        break;
+                    case 'preparing':
+                        preparingContainer.appendChild(orderElement);
+                        break;
+                    case 'ready':
+                        readyContainer.appendChild(orderElement);
+                        break;
+                    case 'delivered':
+                        completedContainer.appendChild(orderElement);
+                        break;
+                }
+            });
+            
+            updateStats();
+        }
+
+        function createOrderCard(order) {
+            const card = document.createElement('div');
+            card.className = `order-card p-4 rounded-lg shadow-md status-${order.status}`;
+            
+            const itemsHtml = order.items.map(item => 
+                `<div class="flex justify-between text-sm">
+                    <span>${item.name} x ${item.quantity}</span>
+                    <span>NPR ${item.price * item.quantity}</span>
+                </div>`
+            ).join('');
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h3 class="font-bold text-lg">Order #${order.id}</h3>
+                        <p class="text-gray-600">${formatTime(order.timestamp)}</p>
+                    </div>
+                    <span class="badge badge-${order.status}">${getStatusText(order.status)}</span>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="flex items-center gap-2 mb-1">
+                        <i class="fas fa-user text-gray-400"></i>
+                        <span class="font-semibold">${order.customerName}</span>
+                    </div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <i class="fas fa-phone text-gray-400"></i>
+                        <a href="tel:${order.phone}" class="text-blue-600 hover:underline">${order.phone}</a>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-map-marker-alt text-gray-400"></i>
+                        <span class="text-sm">${order.address}</span>
+                    </div>
+                </div>
+                
+                <div class="border-t pt-3 mb-3">
+                    ${itemsHtml}
+                    <div class="flex justify-between font-bold border-t mt-2 pt-2">
+                        <span>Total:</span>
+                        <span>NPR ${order.total}</span>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-2">
+                    ${order.status === 'pending' ? 
+                        `<button onclick="updateOrderStatus('${order.id}', 'preparing')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm flex items-center gap-1">
+                            <i class="fas fa-utensils"></i> Start Preparing
+                        </button>` : ''
+                    }
+                    ${order.status === 'preparing' ? 
+                        `<button onclick="updateOrderStatus('${order.id}', 'ready')" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm flex items-center gap-1">
+                            <i class="fas fa-check"></i> Mark Ready
+                        </button>` : ''
+                    }
+                    ${order.status === 'ready' ? 
+                        `<button onclick="updateOrderStatus('${order.id}', 'delivered')" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm flex items-center gap-1">
+                            <i class="fas fa-motorcycle"></i> Mark Delivered
+                        </button>` : ''
+                    }
+                    <button onclick="contactCustomer('${order.phone}')" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm flex items-center gap-1">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </button>
+                    <button onclick="callCustomer('${order.phone}')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm flex items-center gap-1">
+                        <i class="fas fa-phone"></i> Call
+                    </button>
+                    ${order.status !== 'delivered' && order.status !== 'cancelled' ?
+                        `<button onclick="cancelOrder('${order.id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm flex items-center gap-1">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>` : ''
+                    }
+                </div>
+                
+                ${order.notes ? `
+                    <div class="mt-3 p-2 bg-yellow-50 rounded text-sm">
+                        <strong>Notes:</strong> ${order.notes}
+                    </div>
+                ` : ''}
+            `;
+            
+            return card;
+        }
+
+        async function updateOrderStatus(orderId, newStatus) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = newStatus;
+                order.timestamp = new Date().toISOString();
+                
+                // Save to localStorage
+                localStorage.setItem('mansaraTajOrders', JSON.stringify(orders));
+                
+                // Sync to cloud
+                await syncWithCloud();
+                
+                renderOrders();
+                showNotification(`Order #${orderId} status changed to ${getStatusText(newStatus)}`);
+            }
+        }
+
+        function contactCustomer(phone) {
+            const message = "Namaste! This is Mansara Taj regarding your order. How can we help you?";
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        function callCustomer(phone) {
+            window.open(`tel:${phone}`, '_blank');
+        }
+
+        async function cancelOrder(orderId) {
+            if (confirm('Are you sure you want to cancel this order?')) {
+                const order = orders.find(o => o.id === orderId);
+                if (order) {
+                    order.status = 'cancelled';
+                    order.timestamp = new Date().toISOString();
+                    
+                    // Save to localStorage
+                    localStorage.setItem('mansaraTajOrders', JSON.stringify(orders));
+                    
+                    // Sync to cloud
+                    await syncWithCloud();
+                    
+                    renderOrders();
+                    showNotification(`Order #${orderId} has been cancelled`);
+                }
+            }
+        }
+
+        // Manual order functions
+        function addManualOrder() {
+            document.getElementById('manualOrderModal').classList.remove('hidden');
+        }
+
+        function closeManualOrder() {
+            document.getElementById('manualOrderModal').classList.add('hidden');
+            document.getElementById('manualOrderForm').reset();
+        }
+
+        // Helper functions
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': 'Pending',
+                'preparing': 'Preparing',
+                'ready': 'Ready',
+                'delivered': 'Delivered',
+                'cancelled': 'Cancelled'
+            };
+            return statusMap[status] || status;
+        }
+
+        function formatTime(timestamp) {
+            return new Date(timestamp).toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+
+        function updateTime() {
+            document.getElementById('currentTime').textContent = 
+                new Date().toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                });
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            document.getElementById('notificationMessage').textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        async function markAllPreparing() {
+            if (confirm('Mark all pending orders as preparing?')) {
+                orders.forEach(order => {
+                    if (order.status === 'pending') {
+                        order.status = 'preparing';
+                    }
+                });
+                
+                // Save to localStorage
+                localStorage.setItem('mansaraTajOrders', JSON.stringify(orders));
+                
+                // Sync to cloud
+                await syncWithCloud();
+                
+                renderOrders();
+                showNotification('All pending orders marked as preparing');
+            }
+        }
+
+        function exportOrders() {
+            const dataStr = JSON.stringify(orders, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `mansara-taj-orders-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            showNotification('Orders exported successfully');
+        }
+
+        async function clearAllOrders() {
+            if (confirm('Are you sure you want to clear ALL orders? This cannot be undone.')) {
+                orders = [];
+                
+                // Save to localStorage
+                localStorage.setItem('mansaraTajOrders', JSON.stringify(orders));
+                
+                // Sync to cloud
+                await syncWithCloud();
+                
+                renderOrders();
+                showNotification('All orders cleared');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('loginForm').addEventListener('submit', login);
+        
+        document.getElementById('manualOrderForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const newOrder = {
+                id: 'MT' + Date.now().toString().slice(-6),
+                customerName: document.getElementById('manualName').value,
+                phone: document.getElementById('manualPhone').value,
+                address: document.getElementById('manualAddress').value,
+                items: parseItems(document.getElementById('manualItems').value),
+                total: parseInt(document.getElementById('manualTotal').value),
+                status: 'pending',
+                timestamp: new Date().toISOString(),
+                deliveryTime: '30-45 minutes',
+                notes: ''
+            };
+            
+            orders.unshift(newOrder);
+            
+            // Save to localStorage
+            localStorage.setItem('mansaraTajOrders', JSON.stringify(orders));
+            
+            // Sync to cloud
+            await syncWithCloud();
+            
+            closeManualOrder();
+            showNotification(`Manual order #${newOrder.id} added successfully`);
+        });
+
+        function parseItems(itemsText) {
+            return itemsText.split(',').map(item => {
+                const [name, quantity] = item.trim().split(' x ');
+                const prices = {
+                    'classic chicken biryani': 350,
+                    'spicy chicken biryani': 380,
+                    'hyderabadi biryani': 420,
+                    'vegetable pulao': 250,
+                    'chicken pulao': 320,
+                    'raita': 80,
+                    'salad': 70,
+                    'gulab jamun': 120,
+                    'kheer': 100,
+                    'mango lassi': 120,
+                    'masala chai': 60
+                };
+                
+                const itemName = name.toLowerCase();
+                const price = prices[itemName] || 200;
+                
+                return {
+                    name: name.trim(),
+                    quantity: parseInt(quantity) || 1,
+                    price: price
+                };
+            });
+        }
+
+        // Initialize login check when page loads
+        document.addEventListener('DOMContentLoaded', checkLogin);
+    </script>
+</body>
+</html>
