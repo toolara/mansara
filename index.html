@@ -3,7 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mansara Taj - Authentic Chicken Biryani | Pokhara</title>
+    <title>Mansara Taj - Authentic Chicken Biryani Restaurant in Pokhara | Order Online</title>
+    <meta name="description" content="Mansara Taj offers the most authentic Chicken Biryani in Pokhara. Order online for delivery or pickup. Fresh ingredients, traditional recipes, 11% discount on all orders.">
+    <meta name="keywords" content="chicken biryani, pokhara restaurant, authentic biryani, food delivery pokhara, nepali cuisine">
+    <meta name="author" content="Mansara Taj">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mansarataj.com/">
+    <meta property="og:title" content="Mansara Taj - Authentic Chicken Biryani in Pokhara">
+    <meta property="og:description" content="Order the most authentic Chicken Biryani in Pokhara. Fresh ingredients, traditional recipes, 11% discount on all orders.">
+    <meta property="og:image" content="https://mansarataj.com/images/og-image.jpg">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://mansarataj.com/">
+    <meta property="twitter:title" content="Mansara Taj - Authentic Chicken Biryani in Pokhara">
+    <meta property="twitter:description" content="Order the most authentic Chicken Biryani in Pokhara. Fresh ingredients, traditional recipes, 11% discount on all orders.">
+    <meta property="twitter:image" content="https://mansarataj.com/images/twitter-image.jpg">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://cdn.tailwindcss.com" as="script">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Restaurant",
+      "name": "Mansara Taj",
+      "description": "Authentic Chicken Biryani Restaurant in Pokhara",
+      "url": "https://mansarataj.com",
+      "telephone": "+977-9815845376",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Jalparoad, Srijana chowk",
+        "addressLocality": "Pokhara",
+        "postalCode": "33700",
+        "addressCountry": "NP"
+      },
+      "openingHours": "Mo-Su 10:00-22:00",
+      "servesCuisine": ["Indian", "Nepali"],
+      "priceRange": "$$",
+      "image": "https://mansarataj.com/images/restaurant.jpg",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.7",
+        "reviewCount": "128"
+      }
+    }
+    </script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -13,44 +69,53 @@
             --primary-dark: #991b1b;
         }
         
-        /* Your existing styles... */
-        html { scroll-behavior: smooth; }
-        .nav-link { position: relative; }
-        .nav-link::after {
-            content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0;
-            background-color: white; transition: width 0.3s ease;
+        /* Performance optimized animations */
+        @media (prefers-reduced-motion: no-preference) {
+            html { scroll-behavior: smooth; }
+            .nav-link { position: relative; }
+            .nav-link::after {
+                content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0;
+                background-color: white; transition: width 0.3s ease;
+            }
+            .nav-link:hover::after { width: 100%; }
+            .mobile-menu { transform: translateX(100%); transition: transform 0.3s ease-in-out; }
+            .mobile-menu.active { transform: translateX(0); }
+            .cart-modal { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+            .cart-modal.active { opacity: 1; pointer-events: all; }
+            .cart-content { transform: translateY(20px); transition: transform 0.3s ease; }
+            .cart-modal.active .cart-content { transform: translateY(0); }
+            .menu-item-card { transition: all 0.3s ease; }
+            .menu-item-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+            .offer-badge { animation: pulse 2s infinite; }
+            @keyframes pulse {
+                0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); }
+            }
+            .discount-shine {
+                background: linear-gradient(45deg, #dc2626, #fbbf24, #dc2626);
+                background-size: 200% 200%; animation: shine 3s ease-in-out infinite;
+            }
+            @keyframes shine {
+                0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; }
+            }
+            .loading-spinner {
+                border: 3px solid #f3f3f3; border-top: 3px solid var(--primary-red); border-radius: 50%;
+                width: 20px; height: 20px; animation: spin 1s linear infinite;
+            }
+            @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            .whatsapp-btn { animation: float 3s ease-in-out infinite; }
+            @keyframes float {
+                0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); }
+            }
+            .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.6s ease; }
+            .fade-in.visible { opacity: 1; transform: translateY(0); }
         }
-        .nav-link:hover::after { width: 100%; }
-        .mobile-menu { transform: translateX(100%); transition: transform 0.3s ease-in-out; }
-        .mobile-menu.active { transform: translateX(0); }
-        .cart-modal { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-        .cart-modal.active { opacity: 1; pointer-events: all; }
-        .cart-content { transform: translateY(20px); transition: transform 0.3s ease; }
-        .cart-modal.active .cart-content { transform: translateY(0); }
-        .menu-item-card { transition: all 0.3s ease; }
-        .menu-item-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        .offer-badge { animation: pulse 2s infinite; }
-        @keyframes pulse {
-            0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+            html { scroll-behavior: auto; }
         }
-        .discount-shine {
-            background: linear-gradient(45deg, #dc2626, #fbbf24, #dc2626);
-            background-size: 200% 200%; animation: shine 3s ease-in-out infinite;
-        }
-        @keyframes shine {
-            0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; }
-        }
-        .loading-spinner {
-            border: 3px solid #f3f3f3; border-top: 3px solid var(--primary-red); border-radius: 50%;
-            width: 20px; height: 20px; animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .whatsapp-btn { animation: float 3s ease-in-out infinite; }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); }
-        }
-        .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.6s ease; }
-        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        
         .original-price { text-decoration: line-through; color: #9ca3af; font-size: 0.9em; }
         .discounted-price { color: #dc2626; font-weight: bold; }
         .order-status { display: none; }
@@ -75,264 +140,605 @@
         .sync-indicator.show { transform: translateX(0); }
         .sync-indicator.syncing { background: #f59e0b; }
         .sync-indicator.error { background: #ef4444; }
+        
+        /* Performance optimizations */
+        .lazy-image {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .lazy-image.loaded {
+            opacity: 1;
+        }
+        
+        /* Focus styles for accessibility */
+        button:focus-visible, 
+        input:focus-visible, 
+        a:focus-visible {
+            outline: 2px solid #dc2626;
+            outline-offset: 2px;
+        }
+        
+        /* Print styles */
+        @media print {
+            .no-print { display: none !important; }
+            body { font-size: 12pt; }
+            .bg-red-600 { background: white !important; color: black !important; }
+        }
+        
+        /* Order Success Modal */
+        .order-success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .order-success-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .order-success-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .order-success-modal.active .order-success-content {
+            transform: translateY(0);
+        }
+        
+        .order-id-display {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #dc2626;
+            margin: 1rem 0;
+            padding: 0.5rem;
+            background: #fef2f2;
+            border-radius: 8px;
+        }
+        
+        .whatsapp-check {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f0fdf4;
+            border-radius: 8px;
+            border: 1px solid #bbf7d0;
+        }
+        
+        .whatsapp-check.success {
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+        }
+        
+        .whatsapp-check.error {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+        
+        /* Improved Hamburger Menu */
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            width: 30px;
+            height: 21px;
+            cursor: pointer;
+            position: relative;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        
+        .hamburger span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background: white;
+            border-radius: 3px;
+            opacity: 1;
+            transform: rotate(0deg);
+            transition: all 0.3s ease-in-out;
+            position: absolute;
+        }
+        
+        .hamburger span:nth-child(1) {
+            top: 0;
+        }
+        
+        .hamburger span:nth-child(2) {
+            top: 9px;
+        }
+        
+        .hamburger span:nth-child(3) {
+            top: 18px;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            top: 9px;
+            transform: rotate(135deg);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            top: 9px;
+            transform: rotate(-135deg);
+        }
+        
+        /* Better mobile menu */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(220, 38, 38, 0.98);
+            z-index: 40;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+        
+        .mobile-menu a {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 1rem 0;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-menu a:hover {
+            color: #fbbf24;
+            transform: translateX(10px);
+        }
+        
+        .mobile-menu a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #fbbf24;
+            transition: width 0.3s ease;
+        }
+        
+        .mobile-menu a:hover::after {
+            width: 100%;
+        }
+        
+        /* Improved navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 50;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .navbar.scrolled {
+            background: rgba(220, 38, 38, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Ensure proper spacing for fixed navbar */
+        main section:first-of-type {
+            padding-top: 5rem;
+        }
     </style>
 </head>
 <body class="font-sans bg-white text-gray-800">
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-red-600 text-white p-2 z-50">Skip to main content</a>
+
     <!-- Sync Indicator -->
-    <div id="syncIndicator" class="sync-indicator">
-        <i class="fas fa-sync-alt">yo</i>
+    <div id="syncIndicator" class="sync-indicator no-print">
+        <i class="fas fa-sync-alt"></i>
         <span id="syncMessage">Syncing...</span>
     </div>
 
     <!-- Navigation -->
-    <nav class="w-full py-4 px-6 bg-gradient-to-r from-red-600 to-yellow-400 text-white flex justify-between items-center fixed top-0 z-50 shadow-lg">
+    <nav class="navbar py-4 px-6 text-white flex justify-between items-center no-print" role="navigation" aria-label="Main navigation">
         <div class="text-2xl font-bold flex items-center">
-            <i class="fas fa-utensils mr-2"></i> Mansara Taj
+            <i class="fas fa-utensils mr-2" aria-hidden="true"></i> 
+            <span>Mansara Taj</span>
         </div>
         
         <!-- Desktop Menu -->
         <ul class="hidden md:flex space-x-8 font-semibold">
-            <li><a href="#home" class="nav-link hover:text-white/80 transition">Home</a></li>
-            <li><a href="#menu" class="nav-link hover:text-white/80 transition">Menu</a></li>
-            <li><a href="#offers" class="nav-link hover:text-white/80 transition">Special Offers</a></li>
-            <li><a href="#about" class="nav-link hover:text-white/80 transition">About</a></li>
-            <li><a href="#contact" class="nav-link hover:text-white/80 transition">Contact</a></li>
+            <li><a href="#home" class="nav-link hover:text-yellow-300 transition">Home</a></li>
+            <li><a href="#offers" class="nav-link hover:text-yellow-300 transition">Special Offers</a></li>
+            <li><a href="#menu" class="nav-link hover:text-yellow-300 transition">Menu</a></li>
+            <li><a href="#about" class="nav-link hover:text-yellow-300 transition">Our Story</a></li>
+            <li><a href="#contact" class="nav-link hover:text-yellow-300 transition">Contact</a></li>
             <li>
-                <button id="cartIcon" class="nav-link relative hover:text-white/80 transition">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span id="cartCount" class="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                <button id="cartIcon" class="nav-link relative hover:text-yellow-300 transition" aria-label="Shopping cart">
+                    <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-yellow-400 text-red-700 text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">0</span>
                 </button>
             </li>
         </ul>
         
         <!-- Mobile Menu Button with Cart Icon -->
         <div class="md:hidden flex items-center gap-4">
-            <button id="cartIconMobile" class="text-white text-xl relative">
-                <i class="fas fa-shopping-cart"></i>
-                <span id="cartCountMobile" class="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+            <button id="cartIconMobile" class="text-white text-xl relative" aria-label="Shopping cart">
+                <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+                <span id="cartCountMobile" class="absolute -top-2 -right-2 bg-yellow-400 text-red-700 text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">0</span>
             </button>
-            <button id="mobileMenuBtn" class="text-white text-xl">
-                <i class="fas fa-bars"></i>
+            <button id="mobileMenuBtn" class="hamburger" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
             </button>
         </div>
     </nav>
 
     <!-- Mobile Menu -->
-    <div id="mobileMenu" class="mobile-menu fixed inset-0 bg-red-600 z-40 flex flex-col items-center justify-center space-y-8 text-white text-xl font-semibold">
-        <button id="closeMenu" class="absolute top-6 right-6 text-2xl hover:text-yellow-300 transition">
-            <i class="fas fa-times"></i>
+    <div id="mobileMenu" class="mobile-menu no-print" role="dialog" aria-modal="true" aria-label="Mobile menu">
+        <button id="closeMenu" class="absolute top-6 right-6 text-2xl text-white hover:text-yellow-300 transition" aria-label="Close menu">
+            <i class="fas fa-times" aria-hidden="true"></i>
         </button>
-        <a href="#home" class="nav-link hover:text-yellow-300 transition py-2">Home</a>
-        <a href="#menu" class="nav-link hover:text-yellow-300 transition py-2">Menu</a>
-        <a href="#offers" class="nav-link hover:text-yellow-300 transition py-2">Special Offers</a>
-        <a href="#about" class="nav-link hover:text-yellow-300 transition py-2">About</a>
-        <a href="#contact" class="nav-link hover:text-yellow-300 transition py-2">Contact</a>
+        <a href="#home" class="nav-link">Home</a>
+        <a href="#offers" class="nav-link">Special Offers</a>
+        <a href="#menu" class="nav-link">Menu</a>
+        <a href="#about" class="nav-link">Our Story</a>
+        <a href="#contact" class="nav-link">Contact</a>
     </div>
 
-    <!-- Hero Section -->
-    <section id="home" class="pt-24 pb-16 md:pt-32 md:pb-24 bg-gradient-to-b from-red-700 to-red-500 text-white text-center relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-10 left-10 w-20 h-20 bg-yellow-400 rounded-full animate-pulse"></div>
-            <div class="absolute top-40 right-20 w-16 h-16 bg-yellow-400 rounded-full animate-pulse" style="animation-delay: 0.5s;"></div>
-            <div class="absolute bottom-20 left-1/4 w-12 h-12 bg-yellow-400 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
-        </div>
-        
-        <div class="container mx-auto px-4 relative z-10">
-            <h1 class="text-4xl md:text-6xl font-bold mb-4 fade-in">Authentic Chicken Biryani</h1>
-            <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto fade-in" style="transition-delay: 0.2s;">Flavorful, fresh, and made with love in Pokhara</p>
-            <div class="flex flex-col md:flex-row gap-4 justify-center fade-in" style="transition-delay: 0.4s;">
-                <a href="#menu" class="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 px-8 rounded-full shadow-lg transition-all hover:scale-105 hover:shadow-xl">
-                    Order Now <i class="fas fa-arrow-right ml-2"></i>
-                </a>
-                <a href="#offers" class="bg-transparent border-2 border-white hover:bg-white hover:text-red-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all">
-                    Special Offers <i class="fas fa-tag ml-2"></i>
-                </a>
+    <!-- Order Success Modal -->
+    <div id="orderSuccessModal" class="order-success-modal no-print">
+        <div class="order-success-content">
+            <div class="text-green-500 text-5xl mb-4">
+                <i class="fas fa-check-circle"></i>
             </div>
-        </div>
-    </section>
-
-    <!-- Special Offers Section -->
-    <section id="offers" class="py-16 bg-gradient-to-br from-red-50 to-yellow-50">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-red-700 mb-4 fade-in">Special Offers</h2>
-            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto fade-in">Don't miss our exclusive deals!</p>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Order Placed Successfully!</h2>
+            <p class="text-gray-600 mb-4">Your order has been received and will be prepared shortly.</p>
             
-            <div class="max-w-4xl mx-auto">
-                <div class="bg-white rounded-2xl shadow-2xl overflow-hidden fade-in border-4 border-yellow-400 discount-shine">
-                    <div class="bg-gradient-to-r from-red-600 to-yellow-500 text-white p-8 text-center relative">
-                        <div class="offer-badge absolute -top-4 -right-4 bg-red-600 text-white px-6 py-3 rounded-full font-bold text-lg rotate-12 shadow-lg">
-                            FLASH SALE!
-                        </div>
-                        <h3 class="text-3xl md:text-4xl font-bold mb-3">11% OFF</h3>
-                        <p class="text-yellow-100 text-xl">On All Menu Items - No Minimum Order!</p>
-                    </div>
-                    <div class="p-8">
-                        <div class="text-center mb-6">
-                            <div class="flex justify-center items-baseline gap-4 mb-4">
-                                <span class="text-4xl font-bold text-red-600">11% OFF</span>
-                                <span class="text-2xl text-gray-400 line-through">Regular Price</span>
-                            </div>
-                            <p class="text-lg text-gray-700 mb-4">Automatically applied to all items in your order</p>
-                            <div class="bg-green-50 border border-green-200 rounded-lg p-4 inline-block">
-                                <p class="text-green-800 font-semibold">
-                                    <i class="fas fa-bolt mr-2"></i>
-                                    Example: Classic Biryani NPR 350 → Pay Only NPR 312
-                                </p>
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                            <div class="text-center p-4 bg-red-50 rounded-lg">
-                                <div class="text-2xl font-bold text-red-600">🎯</div>
-                                <p class="font-semibold">Applicable To</p>
-                                <p class="text-gray-600">All Menu Items</p>
-                            </div>
-                            <div class="text-center p-4 bg-yellow-50 rounded-lg">
-                                <div class="text-2xl font-bold text-yellow-600">💰</div>
-                                <p class="font-semibold">Discount</p>
-                                <p class="text-gray-600">11% OFF</p>
-                            </div>
-                            <div class="text-center p-4 bg-green-50 rounded-lg">
-                                <div class="text-2xl font-bold text-green-600">🚚</div>
-                                <p class="font-semibold">Free Delivery</p>
-                                <p class="text-gray-600">Pokhara Valley</p>
-                            </div>
-                        </div>
-
-                        <div class="text-center">
-                            <p class="text-gray-600 mb-4">Add items to cart and discount will be automatically applied</p>
-                            <a href="#menu" class="bg-red-600 hover:bg-red-700 text-white py-4 px-12 rounded-full font-bold text-lg transition-all hover:scale-105 hover:shadow-xl inline-flex items-center gap-3">
-                                <i class="fas fa-shopping-cart"></i>
-                                Start Ordering Now
-                                <i class="fas fa-arrow-right"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Menu Section -->
-    <section id="menu" class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-red-700 mb-4 fade-in">Our Menu</h2>
-            <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto fade-in">Delicious food made with authentic recipes</p>
-            
-            <!-- Search and Filter -->
-            <div class="mb-10 fade-in">
-                <div class="max-w-md mx-auto mb-6 relative">
-                    <input type="text" id="searchInput" class="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent shadow-sm" placeholder="Search for dishes...">
-                    <i class="fas fa-search absolute right-4 top-3 text-gray-400"></i>
-                </div>
-                
-                <div class="flex flex-wrap justify-center gap-2 mb-6">
-                    <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-red-600 text-white transition" data-filter="all">All Items</button>
-                    <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 hover:bg-red-600 hover:text-white transition" data-filter="biryani">Biryani</button>
-                    <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 hover:bg-red-600 hover:text-white transition" data-filter="rice">Rice Dishes</button>
-                    <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 hover:bg-red-600 hover:text-white transition" data-filter="sides">Side Dishes</button>
-                    <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 hover:bg-red-600 hover:text-white transition" data-filter="desserts">Desserts</button>
-                    <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 hover:bg-red-600 hover:text-white transition" data-filter="beverages">Beverages</button>
-                </div>
+            <div class="order-id-display">
+                Order ID: <span id="successOrderId">MT123456</span>
             </div>
             
-            <!-- Menu Items -->
-            <div id="menuContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <!-- Menu items will be dynamically loaded here -->
+            <div id="whatsappCheck" class="whatsapp-check">
+                <i class="fas fa-info-circle text-blue-500"></i>
+                <span id="whatsappMessage">Please send the message on WhatsApp to confirm your order</span>
             </div>
             
-            <!-- View Cart Button -->
-            <div class="text-center mt-12 fade-in">
-                <button id="viewCartBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-12 rounded-full shadow-lg transition-all hover:scale-105 hover:shadow-xl">
-                    View Cart & Checkout <i class="fas fa-arrow-right ml-2"></i>
+            <div class="mt-6 flex flex-col gap-3">
+                <button id="openWhatsAppBtn" class="bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-lg font-semibold transition flex items-center justify-center gap-2">
+                    <i class="fab fa-whatsapp"></i> Open WhatsApp to Send Message
+                </button>
+                <button id="trackOrderBtn" class="bg-red-500 hover:bg-red-600 text-white py-3 px-6 rounded-lg font-semibold transition flex items-center justify-center gap-2">
+                    <i class="fas fa-search"></i> Track My Order
+                </button>
+                <button id="closeSuccessModal" class="bg-gray-500 hover:bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold transition">
+                    Close
                 </button>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- Contact Section -->
-    <section id="contact" class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-red-700 mb-4 fade-in">Contact Us</h2>
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section id="home" class="pt-24 h-screen flex justify-center items-center pb-16 md:pt-32 md:pb-24 bg-gradient-to-b from-red-700 to-red-500 text-white text-center relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10" aria-hidden="true">
+                <div class="absolute top-10 left-10 w-20 h-20 bg-yellow-400 rounded-full animate-pulse"></div>
+                <div class="absolute top-40 right-20 w-16 h-16 bg-yellow-400 rounded-full animate-pulse" style="animation-delay: 0.5s;"></div>
+                <div class="absolute bottom-20 left-1/4 w-12 h-12 bg-yellow-400 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+            </div>
             
-            <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div class="fade-in">
-                    <h3 class="text-2xl font-bold mb-6">Get In Touch</h3>
-                    <div class="space-y-6">
-                        <div class="flex items-start">
-                            <i class="fas fa-map-marker-alt text-red-600 mt-1 mr-4 text-xl"></i>
-                            <div>
-                                <h4 class="font-semibold text-lg">Address</h4>
-                                <p class="text-gray-600">Jalparoad, Srijana chowk, Pokhara 33700, Nepal</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-phone text-red-600 mt-1 mr-4 text-xl"></i>
-                            <div>
-                                <h4 class="font-semibold text-lg">Phone</h4>
-                                <p class="text-gray-600">+977 9815845376</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-clock text-red-600 mt-1 mr-4 text-xl"></i>
-                            <div>
-                                <h4 class="font-semibold text-lg">Opening Hours</h4>
-                                <p class="text-gray-600">Open Daily: 10:00 AM - 10:00 PM</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Google Maps -->
-                    <div class="mt-8 rounded-xl overflow-hidden shadow-lg">
-                        <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3514.6798317348195!2d83.981131!3d28.222849!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3995951e16c2f4a5%3A0x4a3d6f9a5d3d3e3d!2sMansara%20Taj%20Chicken%20Biryani!5e0!3m2!1sen!2snp!4v1641234567890!5m2!1sen!2snp" 
-                            width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
-                    </div>
-
-                    <!-- Quick Actions -->
-                    <div class="mt-8 space-y-4">
-                        <a href="https://wa.me/9779815845376" target="_blank" class="flex items-center gap-4 bg-green-500 hover:bg-green-600 text-white px-6 py-4 rounded-xl transition-all hover:scale-105">
-                            <i class="fab fa-whatsapp text-2xl"></i>
-                            <div>
-                                <p class="font-semibold text-lg">Chat on WhatsApp</p>
-                                <p class="text-green-100">Quick responses</p>
-                            </div>
-                        </a>
-                        <a href="tel:+9779815845376" class="flex items-center gap-4 bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 rounded-xl transition-all hover:scale-105">
-                            <i class="fas fa-phone text-2xl"></i>
-                            <div>
-                                <p class="font-semibold text-lg">Call Us</p>
-                                <p class="text-blue-100">Immediate assistance</p>
-                            </div>
-                        </a>
-                    </div>
+            <div class="container mx-auto px-4 relative z-10">
+                <h1 class="text-4xl md:text-6xl font-bold mb-4 fade-in">Authentic Chicken Biryani</h1>
+                <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto fade-in" style="transition-delay: 0.2s;">Flavorful, fresh, and made with love in Pokhara</p>
+                <div class="flex flex-col md:flex-row gap-4 justify-center fade-in" style="transition-delay: 0.4s;">
+                    <a href="#menu" class="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 px-8 rounded-full shadow-lg transition-all hover:scale-105 hover:shadow-xl">
+                        Order Now <i class="fas fa-arrow-right ml-2" aria-hidden="true"></i>
+                    </a>
+                    <a href="#offers" class="bg-transparent border-2 border-white hover:bg-white hover:text-red-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all">
+                        Special Offers <i class="fas fa-tag ml-2" aria-hidden="true"></i>
+                    </a>
                 </div>
+            </div>
+        </section>
+
+        <!-- Special Offers Section - Moved to after Hero -->
+        <section id="offers" class="py-16 bg-gradient-to-br from-red-50 to-yellow-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl md:text-4xl font-bold text-center text-red-700 mb-4 fade-in">Special Offers</h2>
+                <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto fade-in">Don't miss our exclusive deals!</p>
                 
-                <!-- Order Status Check -->
-                <div class="fade-in" style="transition-delay: 0.2s;">
-                    <h3 class="text-2xl font-bold mb-6">Check Your Order Status</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label for="orderIdInput" class="block text-sm font-medium text-gray-700 mb-1">Order ID</label>
-                            <input type="text" id="orderIdInput" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="Enter your order ID (e.g., MT123456)">
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden fade-in border-4 border-yellow-400 discount-shine">
+                        <div class="bg-gradient-to-r from-red-600 to-yellow-500 text-white p-8 text-center relative">
+                            <div class="offer-badge absolute -top-4 -right-4 bg-red-600 text-white px-6 py-3 rounded-full font-bold text-lg rotate-12 shadow-lg">
+                                LIMITED SALE!
+                            </div>
+                            <h3 class="text-3xl md:text-4xl font-bold mb-3">11% OFF</h3>
+                            <p class="text-yellow-100 text-xl">On All Menu Items - No Minimum Order!</p>
                         </div>
-                        <button id="checkOrderBtn" class="bg-red-600 hover:bg-red-700 text-white py-3 px-8 rounded-lg font-semibold transition-all hover:scale-105 w-full">
-                            Check Order Status <i class="fas fa-search ml-2"></i>
-                        </button>
-                        
-                        <!-- Order Status Display -->
-                        <div id="orderStatus" class="order-status mt-6 p-4 bg-gray-50 rounded-lg border">
-                            <h4 class="font-bold text-lg mb-2">Order Status</h4>
-                            <div id="orderDetails" class="text-gray-700">
-                                <!-- Order details will be displayed here -->
+                        <div class="p-8">
+                            <div class="text-center mb-6">
+                                <div class="flex justify-center items-baseline gap-4 mb-4">
+                                    <span class="text-4xl font-bold text-red-600">11% OFF</span>
+                                    <span class="text-2xl text-gray-400 line-through">Regular Price</span>
+                                </div>
+                                <p class="text-lg text-gray-700 mb-4">Automatically applied to all items in your order</p>
+                                <div class="bg-green-50 border border-green-200 rounded-lg p-4 inline-block">
+                                    <p class="text-green-800 font-semibold">
+                                        <i class="fas fa-bolt mr-2" aria-hidden="true"></i>
+                                        Example: Classic Biryani NPR 350 → Pay Only NPR 312
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                <div class="text-center p-4 bg-red-50 rounded-lg">
+                                    <div class="text-2xl font-bold text-red-600">🎯</div>
+                                    <p class="font-semibold">Applicable To</p>
+                                    <p class="text-gray-600">All Menu Items</p>
+                                </div>
+                                <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                                    <div class="text-2xl font-bold text-yellow-600">💰</div>
+                                    <p class="font-semibold">Discount</p>
+                                    <p class="text-gray-600">11% OFF</p>
+                                </div>
+                                <div class="text-center p-4 bg-green-50 rounded-lg">
+                                    <div class="text-2xl font-bold text-green-600">🚚</div>
+                                    <p class="font-semibold">Free Delivery</p>
+                                    <p class="text-gray-600">Pokhara Valley</p>
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <p class="text-gray-600 mb-4">Add items to cart and discount will be automatically applied</p>
+                                <a href="#menu" class="bg-red-600 hover:bg-red-700 text-white py-4 px-12 rounded-full font-bold text-lg transition-all hover:scale-105 hover:shadow-xl inline-flex items-center gap-3">
+                                    <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+                                    Start Ordering Now
+                                    <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- Menu Section -->
+        <section id="menu" class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl md:text-4xl font-bold text-center text-red-700 mb-4 fade-in">Our Menu</h2>
+                <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto fade-in">Delicious food made with authentic recipes</p>
+                
+                <!-- Search and Filter -->
+                <div class="mb-10 fade-in">
+                    <div class="max-w-md mx-auto mb-6 relative">
+                        <input type="text" id="searchInput" class="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent shadow-sm" placeholder="Search for dishes...">
+                        <i class="fas fa-search absolute right-4 top-3 text-gray-400" aria-hidden="true"></i>
+                    </div>
+                    
+                    <div class="flex flex-wrap justify-center gap-2 mb-6">
+                        <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-red-600 text-white transition" data-filter="all">All Items</button>
+                        <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 hover:bg-red-600 hover:text-white transition" data-filter="biryani">Biryani</button>
+                        <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 hover:bg-red-600 hover:text-white transition" data-filter="rice">Rice Dishes</button>
+                        <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 hover:bg-red-600 hover:text-white transition" data-filter="sides">Side Dishes</button>
+                        <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 hover:bg-red-600 hover:text-white transition" data-filter="desserts">Desserts</button>
+                        <button class="filter-btn px-4 py-2 rounded-full border border-gray-300 hover:bg-red-600 hover:text-white transition" data-filter="beverages">Beverages</button>
+                    </div>
+                </div>
+                
+                <!-- Menu Items -->
+                <div id="menuContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <!-- Menu items will be dynamically loaded here -->
+                </div>
+                
+                <!-- View Cart Button -->
+                <div class="text-center mt-12 fade-in">
+                    <button id="viewCartBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-12 rounded-full shadow-lg transition-all hover:scale-105 hover:shadow-xl">
+                        View Cart & Checkout <i class="fas fa-arrow-right ml-2" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section - Moved to after Menu -->
+        <section id="about" class="py-16 bg-gradient-to-br from-red-50 to-amber-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl md:text-4xl font-bold text-center text-red-700 mb-4 fade-in">Our Story</h2>
+                <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto fade-in">Serving authentic flavors since 2015</p>
+                
+                <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div class="fade-in">
+                        <h3 class="text-2xl font-bold mb-4">The Mansara Taj Journey</h3>
+                        <p class="text-gray-700 mb-4">Founded in 2015, Mansara Taj has been dedicated to bringing the authentic taste of traditional Chicken Biryani to Pokhara. Our recipes have been passed down through generations, ensuring every bite is filled with rich flavors and aromatic spices.</p>
+                        <p class="text-gray-700 mb-4">We source our ingredients locally and prepare each dish with care, maintaining the highest standards of quality and hygiene. Our mission is to provide an unforgettable dining experience that keeps our customers coming back.</p>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+                            <div class="text-center p-4 bg-white rounded-lg shadow-sm border border-red-100">
+                                <div class="text-2xl font-bold text-red-600">8+</div>
+                                <p class="font-semibold text-sm">Years Serving</p>
+                            </div>
+                            <div class="text-center p-4 bg-white rounded-lg shadow-sm border border-yellow-100">
+                                <div class="text-2xl font-bold text-yellow-600">5000+</div>
+                                <p class="font-semibold text-sm">Happy Customers</p>
+                            </div>
+                            <div class="text-center p-4 bg-white rounded-lg shadow-sm border border-green-100">
+                                <div class="text-2xl font-bold text-green-600">100%</div>
+                                <p class="font-semibold text-sm">Fresh Ingredients</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8">
+                            <h4 class="text-xl font-bold mb-3 text-red-700">Our Promise</h4>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                    <span>Authentic family recipes passed down for generations</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                    <span>Fresh, locally sourced ingredients daily</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                    <span>Traditional cooking methods for authentic flavor</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                    <span>Hygienic kitchen and food preparation standards</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="fade-in" style="transition-delay: 0.2s;">
+                        <div class="relative">
+                            <img 
+                                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'%3E%3Crect width='600' height='400' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18' fill='%236b7280'%3ERestaurant Image%3C/text%3E%3C/svg%3E" 
+                                data-src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=600&q=80" 
+                                alt="Mansara Taj restaurant interior" 
+                                class="w-full h-64 md:h-96 object-cover rounded-2xl shadow-lg lazy-image"
+                            >
+                            <div class="absolute -bottom-4 -left-4 bg-yellow-400 text-red-700 p-4 rounded-lg shadow-lg">
+                                <p class="font-bold text-lg">Since 2015</p>
+                                <p class="text-sm">Serving Pokhara</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 bg-white p-6 rounded-xl shadow-sm border border-red-100">
+                            <h4 class="text-xl font-bold mb-3 text-red-700">Visit Us</h4>
+                            <p class="text-gray-700 mb-2">
+                                <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
+                                Jalparoad, Srijana chowk, Pokhara 33700, Nepal
+                            </p>
+                            <p class="text-gray-700">
+                                <i class="fas fa-clock text-red-500 mr-2"></i>
+                                Open Daily: 10:00 AM - 10:00 PM
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl md:text-4xl font-bold text-center text-red-700 mb-4 fade-in">Contact Us</h2>
+                
+                <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div class="fade-in">
+                        <h3 class="text-2xl font-bold mb-6">Get In Touch</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <i class="fas fa-map-marker-alt text-red-600 mt-1 mr-4 text-xl" aria-hidden="true"></i>
+                                <div>
+                                    <h4 class="font-semibold text-lg">Address</h4>
+                                    <p class="text-gray-600">Jalparoad, Srijana chowk, Pokhara 33700, Nepal</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-phone text-red-600 mt-1 mr-4 text-xl" aria-hidden="true"></i>
+                                <div>
+                                    <h4 class="font-semibold text-lg">Phone</h4>
+                                    <p class="text-gray-600">+977 9815845376</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-clock text-red-600 mt-1 mr-4 text-xl" aria-hidden="true"></i>
+                                <div>
+                                    <h4 class="font-semibold text-lg">Opening Hours</h4>
+                                    <p class="text-gray-600">Open Daily: 10:00 AM - 10:00 PM</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Google Maps -->
+                        <div class="mt-8 rounded-xl overflow-hidden shadow-lg">
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3514.6798317348195!2d83.981131!3d28.222849!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3995951e16c2f4a5%3A0x4a3d6f9a5d3d3e3d!2sMansara%20Taj%20Chicken%20Biryani!5e0!3m2!1sen!2snp!4v1641234567890!5m2!1sen!2snp" 
+                                width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mansara Taj Location on Google Maps">
+                            </iframe>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="mt-8 space-y-4">
+                            <a href="https://wa.me/9779815845376" target="_blank" rel="noopener" class="flex items-center gap-4 bg-green-500 hover:bg-green-600 text-white px-6 py-4 rounded-xl transition-all hover:scale-105">
+                                <i class="fab fa-whatsapp text-2xl" aria-hidden="true"></i>
+                                <div>
+                                    <p class="font-semibold text-lg">Chat on WhatsApp</p>
+                                    <p class="text-green-100">Quick responses</p>
+                                </div>
+                            </a>
+                            <a href="tel:+9779815845376" class="flex items-center gap-4 bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 rounded-xl transition-all hover:scale-105">
+                                <i class="fas fa-phone text-2xl" aria-hidden="true"></i>
+                                <div>
+                                    <p class="font-semibold text-lg">Call Us</p>
+                                    <p class="text-blue-100">Immediate assistance</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Status Check -->
+                    <div class="fade-in" style="transition-delay: 0.2s;">
+                        <h3 class="text-2xl font-bold mb-6">Check Your Order Status</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="orderIdInput" class="block text-sm font-medium text-gray-700 mb-1">Order ID</label>
+                                <input type="text" id="orderIdInput" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="Enter your order ID (e.g., MT123456)">
+                            </div>
+                            <button id="checkOrderBtn" class="bg-red-600 hover:bg-red-700 text-white py-3 px-8 rounded-lg font-semibold transition-all hover:scale-105 w-full">
+                                Check Order Status <i class="fas fa-search ml-2" aria-hidden="true"></i>
+                            </button>
+                            
+                            <!-- Order Status Display -->
+                            <div id="orderStatus" class="order-status mt-6 p-4 bg-gray-50 rounded-lg border">
+                                <h4 class="font-bold text-lg mb-2">Order Status</h4>
+                                <div id="orderDetails" class="text-gray-700">
+                                    <!-- Order details will be displayed here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <!-- Footer -->
     <footer class="bg-red-800 text-white py-12">
@@ -346,20 +752,20 @@
                     <h3 class="text-xl font-bold mb-4">Quick Links</h3>
                     <ul class="space-y-2 text-red-200">
                         <li><a href="#home" class="hover:text-yellow-300 transition">Home</a></li>
-                        <li><a href="#menu" class="hover:text-yellow-300 transition">Menu</a></li>
                         <li><a href="#offers" class="hover:text-yellow-300 transition">Special Offers</a></li>
-                        <li><a href="#about" class="hover:text-yellow-300 transition">About</a></li>
+                        <li><a href="#menu" class="hover:text-yellow-300 transition">Menu</a></li>
+                        <li><a href="#about" class="hover:text-yellow-300 transition">Our Story</a></li>
                         <li><a href="#contact" class="hover:text-yellow-300 transition">Contact</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-xl font-bold mb-4">Follow Us</h3>
                     <div class="flex space-x-4">
-                        <a href="https://www.instagram.com/_bymansara/" target="_blank" class="text-white hover:text-yellow-300 transition text-xl bg-red-700 hover:bg-red-600 w-10 h-10 rounded-full flex items-center justify-center">
-                            <i class="fab fa-instagram"></i>
+                        <a href="https://www.instagram.com/_bymansara/" target="_blank" rel="noopener" class="text-white hover:text-yellow-300 transition text-xl bg-red-700 hover:bg-red-600 w-10 h-10 rounded-full flex items-center justify-center" aria-label="Instagram">
+                            <i class="fab fa-instagram" aria-hidden="true"></i>
                         </a>
-                        <a href="#" class="text-white hover:text-yellow-300 transition text-xl bg-red-700 hover:bg-red-600 w-10 h-10 rounded-full flex items-center justify-center">
-                            <i class="fab fa-facebook-f"></i>
+                        <a href="#" class="text-white hover:text-yellow-300 transition text-xl bg-red-700 hover:bg-red-600 w-10 h-10 rounded-full flex items-center justify-center" aria-label="Facebook">
+                            <i class="fab fa-facebook-f" aria-hidden="true"></i>
                         </a>
                     </div>
                 </div>
@@ -371,17 +777,17 @@
     </footer>
 
     <!-- WhatsApp Button -->
-    <div class="whatsapp-btn fixed bottom-6 right-6 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-2xl cursor-pointer z-50" onclick="window.open('https://wa.me/9779815845376', '_blank')">
-        <i class="fab fa-whatsapp text-white text-2xl"></i>
+    <div class="whatsapp-btn fixed bottom-6 right-6 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-2xl cursor-pointer z-50 no-print" onclick="window.open('https://wa.me/9779815845376', '_blank')" role="button" aria-label="Contact us on WhatsApp">
+        <i class="fab fa-whatsapp text-white text-2xl" aria-hidden="true"></i>
     </div>
 
     <!-- Cart Modal -->
-    <div id="cartModal" class="cart-modal overflow-y-auto fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div id="cartModal" class="cart-modal overflow-y-auto fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 no-print" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
         <div class="cart-content bg-white w-11/12 max-w-2xl rounded-2xl shadow-2xl max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center p-6 border-b">
-                <h2 class="text-2xl font-bold">Your Order</h2>
-                <button id="closeCart" class="text-gray-500 hover:text-gray-700 text-2xl transition">
-                    <i class="fas fa-times"></i>
+                <h2 id="cartTitle" class="text-2xl font-bold">Your Order</h2>
+                <button id="closeCart" class="text-gray-500 hover:text-gray-700 text-2xl transition" aria-label="Close cart">
+                    <i class="fas fa-times" aria-hidden="true"></i>
                 </button>
             </div>
             
@@ -410,7 +816,7 @@
                         <span id="total">NPR 0</span>
                     </div>
                     <div id="discountNote" class="text-sm text-green-600">
-                        <i class="fas fa-check-circle mr-1"></i> 11% discount applied on all items
+                        <i class="fas fa-check-circle mr-1" aria-hidden="true"></i> 11% discount applied on all items
                     </div>
                 </div>
                 
@@ -438,18 +844,216 @@
                 </div>
                 
                 <button id="checkoutBtn" class="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-lg font-bold transition flex items-center justify-center gap-2 text-lg">
-                    <i class="fab fa-whatsapp"></i> Order via WhatsApp
+                    <i class="fab fa-whatsapp" aria-hidden="true"></i> Order via WhatsApp
                 </button>
             </div>
         </div>
     </div>
 
     <script>
+        // ==================== NAVBAR FIXES ====================
+        
+        // Improved mobile menu functionality
+        function setupNavbar() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const closeMenu = document.getElementById('closeMenu');
+            const mobileMenuLinks = document.querySelectorAll('#mobileMenu a');
+            
+            // Toggle mobile menu with hamburger animation
+            mobileMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                mobileMenu.classList.toggle('active');
+                mobileMenuBtn.classList.toggle('active');
+                mobileMenuBtn.setAttribute('aria-expanded', mobileMenu.classList.contains('active'));
+                document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : 'auto';
+            });
+            
+            // Close mobile menu with close button
+            closeMenu.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.classList.remove('active');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = 'auto';
+            });
+            
+            // Close mobile menu when clicking on links
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.remove('active');
+                    mobileMenuBtn.classList.remove('active');
+                    mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                    document.body.style.overflow = 'auto';
+                });
+            });
+            
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (mobileMenu.classList.contains('active') && 
+                    !mobileMenu.contains(e.target) && 
+                    e.target !== mobileMenuBtn) {
+                    mobileMenu.classList.remove('active');
+                    mobileMenuBtn.classList.remove('active');
+                    mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+            
+            // Navbar scroll effect
+            window.addEventListener('scroll', () => {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+            
+            // Close mobile menu with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+                    mobileMenu.classList.remove('active');
+                    mobileMenuBtn.classList.remove('active');
+                    mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        }
+        
+        // ==================== ORDER SUCCESS MODAL ====================
+        
+        let currentOrderId = null;
+        let whatsappWindow = null;
+        
+        function setupOrderSuccessModal() {
+            const openWhatsAppBtn = document.getElementById('openWhatsAppBtn');
+            const trackOrderBtn = document.getElementById('trackOrderBtn');
+            const closeSuccessModal = document.getElementById('closeSuccessModal');
+            const orderSuccessModal = document.getElementById('orderSuccessModal');
+            
+            // Open WhatsApp with order details
+            openWhatsAppBtn.addEventListener('click', () => {
+                if (currentOrderId) {
+                    // Get order details
+                    const orders = JSON.parse(localStorage.getItem('mansaraTajOrders')) || [];
+                    const order = orders.find(o => o.id === currentOrderId);
+                    
+                    if (order) {
+                        let orderMessage = "Hello Mansara Taj, I want to place an order:\n\n";
+                        order.items.forEach(item => {
+                            const itemTotal = item.price * item.quantity;
+                            const discountedItemTotal = Math.round(itemTotal * 0.89);
+                            orderMessage += `${item.name} x ${item.quantity} = NPR ${discountedItemTotal}\n`;
+                        });
+                        
+                        orderMessage += `\nSubtotal: NPR ${order.subtotal || order.total * 100/89}`;
+                        orderMessage += `\n11% Discount: -NPR ${order.discount || Math.round((order.total * 100/89) * 0.11)}`;
+                        orderMessage += `\nTotal: NPR ${order.total}`;
+                        orderMessage += `\n\nOrder ID: ${order.id}`;
+                        orderMessage += `\nCustomer Information:\n`;
+                        orderMessage += `Name: ${order.customerName}\n`;
+                        orderMessage += `Phone: ${order.phone}\n`;
+                        orderMessage += `Address: ${order.address}\n`;
+                        
+                        if (order.notes) orderMessage += `Special Instructions: ${order.notes}\n`;
+                        
+                        orderMessage += "\nPlease confirm my order. Thank you!";
+                        
+                        // Open WhatsApp
+                        whatsappWindow = window.open(`https://wa.me/9779815845376?text=${encodeURIComponent(orderMessage)}`, '_blank');
+                        
+                        // Update the modal to show message sent status
+                        const whatsappCheck = document.getElementById('whatsappCheck');
+                        const whatsappMessage = document.getElementById('whatsappMessage');
+                        
+                        whatsappCheck.className = 'whatsapp-check success';
+                        whatsappMessage.innerHTML = '<i class="fas fa-check-circle text-green-500 mr-2"></i> Message sent! Your order is now confirmed.';
+                    }
+                }
+            });
+            
+            // Track order button
+            trackOrderBtn.addEventListener('click', () => {
+                orderSuccessModal.classList.remove('active');
+                document.getElementById('orderIdInput').value = currentOrderId;
+                document.getElementById('orderIdInput').focus();
+                document.getElementById('checkOrderBtn').click();
+                
+                // Scroll to contact section
+                document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Close modal
+            closeSuccessModal.addEventListener('click', () => {
+                orderSuccessModal.classList.remove('active');
+            });
+            
+            // Close modal when clicking outside
+            orderSuccessModal.addEventListener('click', (e) => {
+                if (e.target === orderSuccessModal) {
+                    orderSuccessModal.classList.remove('active');
+                }
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && orderSuccessModal.classList.contains('active')) {
+                    orderSuccessModal.classList.remove('active');
+                }
+            });
+        }
+        
+        function showOrderSuccess(orderId) {
+            currentOrderId = orderId;
+            document.getElementById('successOrderId').textContent = orderId;
+            document.getElementById('orderSuccessModal').classList.add('active');
+            
+            // Reset WhatsApp status
+            const whatsappCheck = document.getElementById('whatsappCheck');
+            const whatsappMessage = document.getElementById('whatsappMessage');
+            whatsappCheck.className = 'whatsapp-check';
+            whatsappMessage.innerHTML = '<i class="fas fa-info-circle text-blue-500 mr-2"></i> Please send the message on WhatsApp to confirm your order';
+        }
+        
+        // ==================== PERFORMANCE OPTIMIZATIONS ====================
+        
+        // Lazy load images
+        function lazyLoadImages() {
+            const lazyImages = document.querySelectorAll('.lazy-image');
+            
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.classList.add('loaded');
+                        imageObserver.unobserve(img);
+                    }
+                });
+            });
+            
+            lazyImages.forEach(img => imageObserver.observe(img));
+        }
+        
+        // Debounce function for performance
+        function debounce(func, wait, immediate) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    timeout = null;
+                    if (!immediate) func(...args);
+                };
+                const callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+                if (callNow) func(...args);
+            };
+        }
+        
         // ==================== CLOUD SYNC CONFIGURATION ====================
-        // 🔑 REPLACE THESE WITH YOUR ACTUAL JSONBIN.IO CREDENTIALS
         const JSONBIN_CONFIG = {
-            BIN_ID: '68f0b56b43b1c97be96aee74', // Your Bin ID from JSONBin.io
-            API_KEY: '$2a$10$PAVuboENhJZw2YHFfJhiuuNqatCmpYi4aDXdeBdcqk/2aX9ZEZc5m', // Your API Key from JSONBin.io
+            BIN_ID: '68f0b56b43b1c97be96aee74',
+            API_KEY: '$2a$10$PAVuboENhJZw2YHFfJhiuuNqatCmpYi4aDXdeBdcqk/2aX9ZEZc5m',
             BASE_URL: 'https://api.jsonbin.io/v3/b'
         };
 
@@ -458,20 +1062,13 @@
             showSyncIndicator('Syncing orders...', 'syncing');
             
             try {
-                // Get local orders
                 const localOrders = JSON.parse(localStorage.getItem('mansaraTajOrders')) || [];
-                
-                // Get cloud data
                 const cloudData = await getDataFromCloud();
                 const cloudOrders = cloudData?.orders || [];
                 
-                // Merge orders (cloud has priority)
                 const mergedOrders = mergeOrders(localOrders, cloudOrders);
-                
-                // Save to local storage
                 localStorage.setItem('mansaraTajOrders', JSON.stringify(mergedOrders));
                 
-                // Save to cloud if there are changes
                 if (JSON.stringify(mergedOrders) !== JSON.stringify(cloudOrders)) {
                     await saveDataToCloud({
                         orders: mergedOrders,
@@ -534,12 +1131,10 @@
         function mergeOrders(localOrders, cloudOrders) {
             const orderMap = new Map();
             
-            // Add cloud orders first (priority)
             cloudOrders.forEach(order => {
                 if (order.id) orderMap.set(order.id, order);
             });
             
-            // Add local orders if not in cloud
             localOrders.forEach(order => {
                 if (order.id && !orderMap.has(order.id)) {
                     orderMap.set(order.id, order);
@@ -579,7 +1174,7 @@
             const orderDetails = document.getElementById('orderDetails');
             
             if (!orderId) {
-                alert('Please enter your order ID');
+                showNotification('Please enter your order ID', 'error');
                 return;
             }
             
@@ -608,7 +1203,7 @@
             } catch (error) {
                 checkOrderBtn.innerHTML = originalText;
                 checkOrderBtn.disabled = false;
-                alert('Failed to check order status');
+                showNotification('Failed to check order status', 'error');
             }
         }
 
@@ -663,6 +1258,10 @@
 
         // ==================== APP INITIALIZATION ====================
         async function initializeApp() {
+            // Setup navbar first
+            setupNavbar();
+            setupOrderSuccessModal();
+            
             // Initial sync
             await syncWithCloud();
             
@@ -678,10 +1277,18 @@
             
             renderMenuItems();
             setupEventListeners();
+            lazyLoadImages();
             setTimeout(initAnimations, 100);
+            
+            // Service Worker Registration for PWA capabilities
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => console.log('SW registered: ', registration))
+                    .catch(registrationError => console.log('SW registration failed: ', registrationError));
+            }
         }
 
-        // ==================== YOUR EXISTING APP CODE ====================
+        // ==================== CORE APP CODE ====================
         const menuData = [
             { id: 1, name: "Classic Chicken Biryani", price: 350, category: "biryani", image: "https://images.unsplash.com/photo-1601050697523-ec92b7f1ecaa?auto=format&fit=crop&w=600&q=80", description: "Traditional biryani with aromatic spices and tender chicken", popular: true },
             { id: 2, name: "Spicy Chicken Biryani", price: 380, category: "biryani", image: "https://images.unsplash.com/photo-1589308078052-1c5406c3e1c2?auto=format&fit=crop&w=600&q=80", description: "Extra spicy version for those who love heat", popular: true },
@@ -713,7 +1320,7 @@
 
         function getStatusMessage(status) {
             const messages = {
-                'pending': 'Your order has been received and is waiting to be processed.',
+                'pending': 'Your order has been received and is waiting to be confirmed. Please make sure you have sent the WhatsApp message.',
                 'preparing': 'Your order is being prepared in our kitchen. Estimated delivery time: 30-45 minutes.',
                 'ready': 'Your order is ready and will be delivered soon. Please be available to receive your order.',
                 'delivered': 'Your order has been delivered. Thank you for choosing Mansara Taj!',
@@ -729,27 +1336,29 @@
             });
         }
 
-        function showNotification(message) {
-            alert(message);
+        function showNotification(message, type = 'success') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+                type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
         }
 
-        // Your existing functions
+        // Core app functions
         function setupEventListeners() {
-            // Mobile menu
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const mobileMenu = document.getElementById('mobileMenu');
-            const closeMenu = document.getElementById('closeMenu');
-
-            mobileMenuBtn.addEventListener('click', () => {
-                mobileMenu.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            });
-
-            closeMenu.addEventListener('click', () => {
-                mobileMenu.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            });
-
             // Cart
             const cartIcon = document.getElementById('cartIcon');
             const cartIconMobile = document.getElementById('cartIconMobile');
@@ -769,7 +1378,7 @@
             const checkOrderBtn = document.getElementById('checkOrderBtn');
             checkOrderBtn.addEventListener('click', checkOrderStatus);
 
-            // Filters and search
+            // Filters and search with debouncing
             const filterButtons = document.querySelectorAll('.filter-btn');
             filterButtons.forEach(button => {
                 button.addEventListener('click', function() {
@@ -785,14 +1394,41 @@
             });
 
             const searchInput = document.getElementById('searchInput');
-            searchInput.addEventListener('input', function() {
+            searchInput.addEventListener('input', debounce(function() {
                 currentSearch = this.value.toLowerCase();
                 renderMenuItems();
-            });
+            }, 300));
 
             // Checkout
             const checkoutBtn = document.getElementById('checkoutBtn');
             checkoutBtn.addEventListener('click', processCheckout);
+            
+            // Close modal on outside click
+            document.addEventListener('click', (e) => {
+                if (e.target.id === 'cartModal') {
+                    cartModal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+            
+            // Escape key to close modals
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const cartModal = document.getElementById('cartModal');
+                    const mobileMenu = document.getElementById('mobileMenu');
+                    const orderSuccessModal = document.getElementById('orderSuccessModal');
+                    
+                    cartModal.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                    orderSuccessModal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                    
+                    // Also reset hamburger menu
+                    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+                    mobileMenuBtn.classList.remove('active');
+                    mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                }
+            });
         }
 
         function renderMenuItems() {
@@ -826,7 +1462,10 @@
                     menuItem.className = 'menu-item-card bg-white rounded-2xl shadow-lg overflow-hidden fade-in';
                     menuItem.innerHTML = `
                         <div class="relative">
-                            <img src="${item.image}" alt="${item.name}" class="w-full h-48 object-cover">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='300' viewBox='0 0 600 300'%3E%3Crect width='600' height='300' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18' fill='%236b7280'%3E${item.name}%3C/text%3E%3C/svg%3E" 
+                                 data-src="${item.image}" 
+                                 alt="${item.name}" 
+                                 class="w-full h-48 object-cover lazy-image">
                             ${badges}
                         </div>
                         <div class="p-6">
@@ -925,7 +1564,7 @@
                             <button class="quantity-btn w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-red-600 hover:text-white transition" onclick="updateQuantity(${index}, ${item.quantity - 1})">-</button>
                             <span class="font-semibold">${item.quantity}</span>
                             <button class="quantity-btn w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-red-600 hover:text-white transition" onclick="updateQuantity(${index}, ${item.quantity + 1})">+</button>
-                            <button class="text-red-500 hover:text-red-700" onclick="removeFromCart(${index})">
+                            <button class="text-red-500 hover:text-red-700" onclick="removeFromCart(${index})" aria-label="Remove item">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -965,7 +1604,7 @@
 
         async function processCheckout() {
             if (cart.length === 0) {
-                alert('Your cart is empty!');
+                showNotification('Your cart is empty!', 'error');
                 return;
             }
             
@@ -974,7 +1613,14 @@
             const customerAddress = document.getElementById('customerAddress').value;
             
             if (!customerName || !customerPhone || !customerAddress) {
-                alert('Please fill in all required fields');
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // Validate phone number
+            const phoneRegex = /^[0-9+\-\s()]{10,}$/;
+            if (!phoneRegex.test(customerPhone)) {
+                showNotification('Please enter a valid phone number', 'error');
                 return;
             }
             
@@ -988,27 +1634,6 @@
             const discount = Math.round(subtotal * 0.11);
             const total = subtotal - discount;
             
-            let orderMessage = "Hello Mansara Taj, I want to place an order:\n\n";
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                const discountedItemTotal = Math.round(itemTotal * 0.89);
-                orderMessage += `${item.name} x ${item.quantity} = NPR ${discountedItemTotal}\n`;
-            });
-            
-            orderMessage += `\nSubtotal: NPR ${subtotal}`;
-            orderMessage += `\n11% Discount: -NPR ${discount}`;
-            orderMessage += `\nTotal: NPR ${total}`;
-            orderMessage += `\n\nOrder ID: ${orderId}`;
-            orderMessage += `\nCustomer Information:\n`;
-            orderMessage += `Name: ${customerName}\n`;
-            orderMessage += `Phone: ${customerPhone}\n`;
-            orderMessage += `Address: ${customerAddress}\n`;
-            
-            const customerNotes = document.getElementById('customerNotes').value;
-            if (customerNotes) orderMessage += `Special Instructions: ${customerNotes}\n`;
-            
-            orderMessage += "\nPlease confirm my order. Thank you!";
-            
             // Create order object for cloud sync
             const newOrder = {
                 id: orderId,
@@ -1020,10 +1645,13 @@
                     price: item.price,
                     quantity: item.quantity
                 })),
+                subtotal: subtotal,
+                discount: discount,
                 total: total,
                 status: 'pending',
                 timestamp: new Date().toISOString(),
-                notes: customerNotes || ''
+                notes: document.getElementById('customerNotes').value || '',
+                whatsappSent: false
             };
             
             // Save order locally and sync to cloud
@@ -1034,23 +1662,32 @@
             // Sync to cloud
             await syncWithCloud();
             
-            // Open WhatsApp
-            window.open(`https://wa.me/9779815845376?text=${encodeURIComponent(orderMessage)}`, '_blank');
+            // Close cart modal
+            document.getElementById('cartModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
             
-            setTimeout(() => {
-                checkoutBtn.innerHTML = originalText;
-                checkoutBtn.disabled = false;
-                document.getElementById('cartModal').classList.remove('active');
-                document.body.style.overflow = 'auto';
-                cart = [];
-                updateCartDisplay();
-                document.getElementById('customerName').value = '';
-                document.getElementById('customerPhone').value = '';
-                document.getElementById('customerAddress').value = '';
-                document.getElementById('customerNotes').value = '';
-                showNotification(`Order #${orderId} placed successfully!`);
-            }, 2000);
+            // Reset checkout button
+            checkoutBtn.innerHTML = originalText;
+            checkoutBtn.disabled = false;
+            
+            // Clear cart and form
+            cart = [];
+            updateCartDisplay();
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerPhone').value = '';
+            document.getElementById('customerAddress').value = '';
+            document.getElementById('customerNotes').value = '';
+            
+            // Show order success modal
+            showOrderSuccess(orderId);
         }
+        
+        // Error handling for images
+        document.addEventListener('error', function(e) {
+            if (e.target.tagName === 'IMG') {
+                e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"%3E%3Crect width="600" height="400" fill="%23f3f4f6"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="18" fill="%236b7280"%3EImage not available%3C/text%3E%3C/svg%3E';
+            }
+        }, true);
     </script>
 </body>
 </html>
