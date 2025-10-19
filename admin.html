@@ -59,9 +59,74 @@
         .sync-indicator.show { transform: translateX(0); }
         .sync-indicator.syncing { background: #f59e0b; }
         .sync-indicator.error { background: #ef4444; }
+
+        /* Loading states */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        /* Improved table styles */
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .orders-table th,
+        .orders-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .orders-table th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .orders-table tr:hover {
+            background: #f9fafb;
+        }
+        
+        /* Improved responsive design */
+        @media (max-width: 768px) {
+            .orders-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .stats-card {
+                margin-bottom: 1rem;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="bg-white p-6 rounded-lg shadow-lg flex items-center gap-3">
+            <div class="loading-spinner"></div>
+            <span class="text-gray-700 font-medium">Loading...</span>
+        </div>
+    </div>
+
     <!-- Sync Indicator -->
     <div id="syncIndicator" class="sync-indicator">
         <i class="fas fa-sync-alt"></i>
@@ -167,6 +232,32 @@
                 </button>
             </div>
 
+            <!-- Filter Controls -->
+            <div class="mb-6 bg-white p-4 rounded-lg shadow-sm">
+                <div class="flex flex-wrap gap-4 items-center">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Status</label>
+                        <select id="statusFilter" class="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500">
+                            <option value="all">All Orders</option>
+                            <option value="pending">Pending</option>
+                            <option value="preparing">Preparing</option>
+                            <option value="ready">Ready</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+                        <input type="date" id="dateFilter" class="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="applyFilters()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                            Apply Filters
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Orders Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Pending Orders -->
@@ -203,6 +294,33 @@
                 </div>
             </div>
 
+            <!-- All Orders Table -->
+            <div class="mt-12">
+                <h2 class="text-xl font-bold mb-4 text-gray-600 flex items-center gap-2">
+                    <i class="fas fa-list"></i> All Orders
+                </h2>
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="orders-table w-full">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Time</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allOrdersTable">
+                                <!-- All orders will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- Completed Orders -->
             <div class="mt-12">
                 <h2 class="text-xl font-bold mb-4 text-gray-600 flex items-center gap-2">
@@ -216,7 +334,7 @@
 
         <!-- Manual Order Modal -->
         <div id="manualOrderModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
                 <h3 class="text-xl font-bold mb-4">Add Manual Order</h3>
                 <form id="manualOrderForm" class="space-y-4">
                     <div>
@@ -233,11 +351,23 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Order Items</label>
-                        <textarea id="manualItems" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Example: Classic Chicken Biryani x 1, Raita x 1" required></textarea>
+                        <div id="manualItemsContainer" class="space-y-2">
+                            <div class="flex gap-2">
+                                <input type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Item name" required>
+                                <input type="number" class="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Qty" value="1" min="1" required>
+                                <input type="number" class="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Price" min="0" required>
+                                <button type="button" onclick="removeManualItem(this)" class="text-red-500 hover:text-red-700">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" onclick="addManualItem()" class="mt-2 text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                            <i class="fas fa-plus"></i> Add Another Item
+                        </button>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Total Amount (NPR)</label>
-                        <input type="number" id="manualTotal" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                        <input type="number" id="manualTotal" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" required readonly>
                     </div>
                     <div class="flex gap-3 pt-4">
                         <button type="button" onclick="closeManualOrder()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-lg transition">Cancel</button>
@@ -390,6 +520,15 @@
             }, 3000);
         }
 
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (show) {
+                overlay.classList.add('active');
+            } else {
+                overlay.classList.remove('active');
+            }
+        }
+
         // ==================== YOUR EXISTING ADMIN CODE ====================
         // SECURE PASSWORD SYSTEM
         const ALLOWED_PASSWORD_HASHES = [
@@ -514,11 +653,13 @@
             const preparingContainer = document.getElementById('preparingOrdersContainer');
             const readyContainer = document.getElementById('readyOrdersContainer');
             const completedContainer = document.getElementById('completedOrdersContainer');
+            const allOrdersTable = document.getElementById('allOrdersTable');
             
             pendingContainer.innerHTML = '';
             preparingContainer.innerHTML = '';
             readyContainer.innerHTML = '';
             completedContainer.innerHTML = '';
+            allOrdersTable.innerHTML = '';
             
             const sortedOrders = [...orders].sort((a, b) => 
                 new Date(b.timestamp) - new Date(a.timestamp)
@@ -541,6 +682,10 @@
                         completedContainer.appendChild(orderElement);
                         break;
                 }
+                
+                // Add to all orders table
+                const tableRow = createOrderTableRow(order);
+                allOrdersTable.appendChild(tableRow);
             });
             
             updateStats();
@@ -628,6 +773,47 @@
             return card;
         }
 
+        function createOrderTableRow(order) {
+            const row = document.createElement('tr');
+            
+            const itemsText = order.items.map(item => 
+                `${item.name} x ${item.quantity}`
+            ).join(', ');
+            
+            row.innerHTML = `
+                <td class="font-semibold">${order.id}</td>
+                <td>
+                    <div class="font-medium">${order.customerName}</div>
+                    <div class="text-sm text-gray-500">${order.phone}</div>
+                </td>
+                <td class="text-sm">${itemsText}</td>
+                <td class="font-semibold">NPR ${order.total}</td>
+                <td><span class="badge badge-${order.status}">${getStatusText(order.status)}</span></td>
+                <td class="text-sm">${formatTime(order.timestamp)}</td>
+                <td>
+                    <div class="flex gap-1">
+                        <button onclick="updateOrderStatus('${order.id}', 'preparing')" class="text-blue-500 hover:text-blue-700" title="Mark Preparing">
+                            <i class="fas fa-utensils"></i>
+                        </button>
+                        <button onclick="updateOrderStatus('${order.id}', 'ready')" class="text-green-500 hover:text-green-700" title="Mark Ready">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button onclick="updateOrderStatus('${order.id}', 'delivered')" class="text-gray-500 hover:text-gray-700" title="Mark Delivered">
+                            <i class="fas fa-motorcycle"></i>
+                        </button>
+                        <button onclick="contactCustomer('${order.phone}')" class="text-green-600 hover:text-green-800" title="WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
+                        <button onclick="cancelOrder('${order.id}')" class="text-red-500 hover:text-red-700" title="Cancel Order">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </td>
+            `;
+            
+            return row;
+        }
+
         async function updateOrderStatus(orderId, newStatus) {
             const order = orders.find(o => o.id === orderId);
             if (order) {
@@ -676,11 +862,57 @@
         // Manual order functions
         function addManualOrder() {
             document.getElementById('manualOrderModal').classList.remove('hidden');
+            document.getElementById('manualOrderForm').reset();
+            document.getElementById('manualItemsContainer').innerHTML = `
+                <div class="flex gap-2">
+                    <input type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Item name" required>
+                    <input type="number" class="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Qty" value="1" min="1" required>
+                    <input type="number" class="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Price" min="0" required>
+                    <button type="button" onclick="removeManualItem(this)" class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            document.getElementById('manualTotal').value = '';
+        }
+
+        function addManualItem() {
+            const container = document.getElementById('manualItemsContainer');
+            const newItem = document.createElement('div');
+            newItem.className = 'flex gap-2';
+            newItem.innerHTML = `
+                <input type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Item name" required>
+                <input type="number" class="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Qty" value="1" min="1" required>
+                <input type="number" class="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Price" min="0" required oninput="calculateManualTotal()">
+                <button type="button" onclick="removeManualItem(this)" class="text-red-500 hover:text-red-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            container.appendChild(newItem);
+        }
+
+        function removeManualItem(button) {
+            if (document.getElementById('manualItemsContainer').children.length > 1) {
+                button.parentElement.remove();
+                calculateManualTotal();
+            }
+        }
+
+        function calculateManualTotal() {
+            const items = document.querySelectorAll('#manualItemsContainer > div');
+            let total = 0;
+            
+            items.forEach(item => {
+                const qty = parseInt(item.querySelector('input[type="number"]:nth-child(2)').value) || 0;
+                const price = parseInt(item.querySelector('input[type="number"]:nth-child(3)').value) || 0;
+                total += qty * price;
+            });
+            
+            document.getElementById('manualTotal').value = total;
         }
 
         function closeManualOrder() {
             document.getElementById('manualOrderModal').classList.add('hidden');
-            document.getElementById('manualOrderForm').reset();
         }
 
         // Helper functions
@@ -769,23 +1001,47 @@
             }
         }
 
+        function applyFilters() {
+            // This function would filter orders based on selected criteria
+            // For now, we'll just show a notification
+            showNotification('Filters applied');
+        }
+
         // Event listeners
         document.getElementById('loginForm').addEventListener('submit', login);
         
         document.getElementById('manualOrderForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            const items = [];
+            const itemElements = document.querySelectorAll('#manualItemsContainer > div');
+            
+            itemElements.forEach(itemEl => {
+                const name = itemEl.querySelector('input[type="text"]').value;
+                const quantity = parseInt(itemEl.querySelector('input[type="number"]:nth-child(2)').value);
+                const price = parseInt(itemEl.querySelector('input[type="number"]:nth-child(3)').value);
+                
+                if (name && quantity && price) {
+                    items.push({
+                        name: name,
+                        quantity: quantity,
+                        price: price
+                    });
+                }
+            });
+            
             const newOrder = {
                 id: 'MT' + Date.now().toString().slice(-6),
                 customerName: document.getElementById('manualName').value,
                 phone: document.getElementById('manualPhone').value,
                 address: document.getElementById('manualAddress').value,
-                items: parseItems(document.getElementById('manualItems').value),
+                items: items,
                 total: parseInt(document.getElementById('manualTotal').value),
                 status: 'pending',
                 timestamp: new Date().toISOString(),
                 deliveryTime: '30-45 minutes',
-                notes: ''
+                notes: '',
+                whatsappSent: true // Mark as sent since it's a manual order
             };
             
             orders.unshift(newOrder);
@@ -799,34 +1055,6 @@
             closeManualOrder();
             showNotification(`Manual order #${newOrder.id} added successfully`);
         });
-
-        function parseItems(itemsText) {
-            return itemsText.split(',').map(item => {
-                const [name, quantity] = item.trim().split(' x ');
-                const prices = {
-                    'classic chicken biryani': 350,
-                    'spicy chicken biryani': 380,
-                    'hyderabadi biryani': 420,
-                    'vegetable pulao': 250,
-                    'chicken pulao': 320,
-                    'raita': 80,
-                    'salad': 70,
-                    'gulab jamun': 120,
-                    'kheer': 100,
-                    'mango lassi': 120,
-                    'masala chai': 60
-                };
-                
-                const itemName = name.toLowerCase();
-                const price = prices[itemName] || 200;
-                
-                return {
-                    name: name.trim(),
-                    quantity: parseInt(quantity) || 1,
-                    price: price
-                };
-            });
-        }
 
         // Initialize login check when page loads
         document.addEventListener('DOMContentLoaded', checkLogin);
