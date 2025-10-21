@@ -664,17 +664,27 @@
                 Order ID: <span id="successOrderId">MT123456</span>
             </div>
             
-            <div id="whatsappCheck" class="whatsapp-check">
-                <i class="fas fa-info-circle text-blue-500"></i>
-                <span id="whatsappMessage">Please send the message on WhatsApp to confirm your order</span>
+            <div id="whatsappCheck" class="whatsapp-check success">
+                <i class="fas fa-check-circle text-green-500"></i>
+                <span id="whatsappMessage">WhatsApp message sent successfully! Your order is confirmed.</span>
+            </div>
+
+            <!-- Tracking Information -->
+            <div class="tracking-info bg-blue-50 p-4 rounded-lg border border-blue-200 mt-4">
+                <h3 class="font-bold text-lg text-blue-800 mb-2">Track Your Order</h3>
+                <p class="text-blue-700 mb-3">Use your Order ID to track your order status anytime:</p>
+                <div class="flex gap-2">
+                    <input type="text" id="trackOrderInput" class="flex-1 px-3 py-2 border border-gray-300 rounded text-center font-mono font-bold" readonly>
+                    <button onclick="copyOrderId()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <p class="text-sm text-blue-600 mt-2">Order ID copied! You can now track your order.</p>
             </div>
             
             <div class="mt-6 flex flex-col gap-3">
-                <button id="openWhatsAppBtn" class="bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-lg font-semibold transition flex items-center justify-center gap-2">
-                    <i class="fab fa-whatsapp"></i> Open WhatsApp to Send Message
-                </button>
                 <button id="trackOrderBtn" class="bg-red-500 hover:bg-red-600 text-white py-3 px-6 rounded-lg font-semibold transition flex items-center justify-center gap-2">
-                    <i class="fas fa-search"></i> Track My Order
+                    <i class="fas fa-search"></i> Track My Order Now
                 </button>
                 <button id="closeSuccessModal" class="bg-gray-500 hover:bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold transition">
                     Close
@@ -708,7 +718,6 @@
             </div>
         </section>
 
-        <!-- Rest of your content remains the same -->
         <!-- Special Offers Section -->
         <section id="offers" class="py-16 bg-gradient-to-br from-red-50 to-yellow-50">
             <div class="container mx-auto px-4">
@@ -1193,18 +1202,102 @@
             }, 100);
         }
         
-        // Rest of your JavaScript remains the same...
-        // [The rest of your JavaScript code remains unchanged]
+        // ==================== ORDER SUCCESS MODAL ====================
         
+        let currentOrderId = null;
+        
+        function setupOrderSuccessModal() {
+            const trackOrderBtn = document.getElementById('trackOrderBtn');
+            const closeSuccessModal = document.getElementById('closeSuccessModal');
+            const orderSuccessModal = document.getElementById('orderSuccessModal');
+            
+            // Track order button
+            trackOrderBtn.addEventListener('click', () => {
+                orderSuccessModal.classList.remove('active');
+                document.getElementById('orderIdInput').value = currentOrderId;
+                document.getElementById('orderIdInput').focus();
+                document.getElementById('checkOrderBtn').click();
+                
+                // Scroll to contact section
+                document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Close modal
+            closeSuccessModal.addEventListener('click', () => {
+                orderSuccessModal.classList.remove('active');
+                document.body.classList.remove('modal-open');
+            });
+            
+            // Close modal when clicking outside
+            orderSuccessModal.addEventListener('click', (e) => {
+                if (e.target === orderSuccessModal) {
+                    orderSuccessModal.classList.remove('active');
+                    document.body.classList.remove('modal-open');
+                }
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && orderSuccessModal.classList.contains('active')) {
+                    orderSuccessModal.classList.remove('active');
+                    document.body.classList.remove('modal-open');
+                }
+            });
+        }
+        
+        function showOrderSuccess(orderId) {
+            currentOrderId = orderId;
+            document.getElementById('successOrderId').textContent = orderId;
+            document.getElementById('trackOrderInput').value = orderId;
+            document.getElementById('orderSuccessModal').classList.add('active');
+            document.body.classList.add('modal-open');
+            
+            // Auto-copy order ID to clipboard
+            copyOrderId();
+        }
+        
+        function copyOrderId() {
+            const orderId = currentOrderId;
+            navigator.clipboard.writeText(orderId).then(() => {
+                console.log('Order ID copied to clipboard');
+            }).catch(err => {
+                console.error('Failed to copy order ID: ', err);
+                // Fallback for older browsers
+                const tempInput = document.createElement('input');
+                tempInput.value = orderId;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+            });
+        }
+        
+        // ==================== CORE APP CODE ====================
+        const menuData = [
+            { id: 1, name: "Classic Chicken Biryani", price: 350, category: "biryani", image: "https://images.unsplash.com/photo-1601050697523-ec92b7f1ecaa?auto=format&fit=crop&w=600&q=80", description: "Traditional biryani with aromatic spices and tender chicken", popular: true },
+            { id: 2, name: "Spicy Chicken Biryani", price: 380, category: "biryani", image: "https://images.unsplash.com/photo-1589308078052-1c5406c3e1c2?auto=format&fit=crop&w=600&q=80", description: "Extra spicy version for those who love heat", popular: true },
+            { id: 3, name: "Hyderabadi Chicken Biryani", price: 420, category: "biryani", image: "https://images.unsplash.com/photo-1563379091339-03246963d96f?auto=format&fit=crop&w=600&q=80", description: "Authentic Hyderabadi style with rich flavors", popular: true },
+            { id: 4, name: "Vegetable Pulao", price: 250, category: "rice", image: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=600&q=80", description: "Fragrant rice with mixed vegetables", popular: false },
+            { id: 5, name: "Chicken Pulao", price: 320, category: "rice", image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=600&q=80", description: "Rice cooked with chicken and mild spices", popular: true },
+            { id: 6, name: "Raita", price: 80, category: "sides", image: "https://images.unsplash.com/photo-1604323682670-c0cbc2c1498d?auto=format&fit=crop&w=600&q=80", description: "Yogurt with cucumber and spices", popular: true },
+            { id: 7, name: "Fresh Salad", price: 70, category: "sides", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80", description: "Mixed vegetables with lemon dressing", popular: false },
+            { id: 8, name: "Gulab Jamun", price: 120, category: "desserts", image: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=600&q=80", description: "Sweet milk dumplings in sugar syrup", popular: true },
+            { id: 9, name: "Kheer", price: 100, category: "desserts", image: "https://images.unsplash.com/photo-1548365324-2d2527e5a620?auto=format&fit=crop&w=600&q=80", description: "Rice pudding with nuts and cardamom", popular: false },
+            { id: 10, name: "Mango Lassi", price: 120, category: "beverages", image: "https://images.unsplash.com/photo-1629367494173-c78a56567877?auto=format&fit=crop&w=600&q=80", description: "Refreshing yogurt drink with mango", popular: true },
+            { id: 11, name: "Masala Chai", price: 60, category: "beverages", image: "https://images.unsplash.com/photo-1571934811356-5cc061b6821f?auto=format&fit=crop&w=600&q=80", description: "Spiced Indian tea", popular: false }
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('mansaraTajCart')) || [];
+        let currentFilter = "all";
+        let currentSearch = "";
+
         // ==================== APP INITIALIZATION ====================
-        async function initializeApp() {
-            // Setup navbar first - FIXED INITIALIZATION
+        function initializeApp() {
+            // Setup navbar first
             setupNavbar();
+            setupOrderSuccessModal();
             
             // Initialize the rest of your app...
-            console.log('App initialized with fixed navbar');
-            
-            // Your existing initialization code...
             const savedCart = localStorage.getItem('mansaraTajCart');
             if (savedCart) {
                 cart = JSON.parse(savedCart);
@@ -1214,6 +1307,9 @@
             renderMenuItems();
             setupEventListeners();
             lazyLoadImages();
+            
+            // Initialize cloud sync
+            syncWithCloud();
         }
 
         // Initialize the app when DOM is loaded
@@ -1226,10 +1322,622 @@
             document.body.style.overflowX = 'hidden';
         });
 
+        // Helper functions
+        function showNotification(message, type = 'success') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+                type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        }
+
+        // Debounce function for performance
+        function debounce(func, wait, immediate) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    timeout = null;
+                    if (!immediate) func(...args);
+                };
+                const callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+                if (callNow) func(...args);
+            };
+        }
+
+        // Lazy load images
+        function lazyLoadImages() {
+            const lazyImages = document.querySelectorAll('.lazy-image');
+            
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        if (img.dataset.src) {
+                            img.src = img.dataset.src;
+                            img.classList.add('loaded');
+                            imageObserver.unobserve(img);
+                        }
+                    }
+                });
+            });
+            
+            lazyImages.forEach(img => {
+                if (img.dataset.src) {
+                    imageObserver.observe(img);
+                }
+            });
+        }
+
+        // Core app functions
+        function setupEventListeners() {
+            // Cart
+            const cartIcon = document.getElementById('cartIcon');
+            const cartIconMobile = document.getElementById('cartIconMobile');
+            const cartModal = document.getElementById('cartModal');
+            const closeCart = document.getElementById('closeCart');
+            const viewCartBtn = document.getElementById('viewCartBtn');
+
+            cartIcon.addEventListener('click', openCart);
+            cartIconMobile.addEventListener('click', openCart);
+            viewCartBtn.addEventListener('click', openCart);
+            closeCart.addEventListener('click', () => {
+                cartModal.classList.remove('active');
+                document.body.classList.remove('modal-open');
+            });
+
+            // Order check
+            const checkOrderBtn = document.getElementById('checkOrderBtn');
+            checkOrderBtn.addEventListener('click', checkOrderStatus);
+
+            // Filters and search
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    filterButtons.forEach(btn => {
+                        btn.classList.remove('bg-red-600', 'text-white');
+                        btn.classList.add('hover:bg-red-600', 'hover:text-white');
+                    });
+                    this.classList.add('bg-red-600', 'text-white');
+                    this.classList.remove('hover:bg-red-600', 'hover:text-white');
+                    currentFilter = this.getAttribute('data-filter');
+                    renderMenuItems();
+                });
+            });
+
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', debounce(function() {
+                currentSearch = this.value.toLowerCase();
+                renderMenuItems();
+            }, 300));
+
+            // Checkout
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            checkoutBtn.addEventListener('click', processCheckout);
+            
+            // Close modal on outside click
+            document.addEventListener('click', (e) => {
+                if (e.target.id === 'cartModal') {
+                    cartModal.classList.remove('active');
+                    document.body.classList.remove('modal-open');
+                }
+            });
+        }
+
+        function renderMenuItems() {
+            const menuContainer = document.getElementById('menuContainer');
+            menuContainer.innerHTML = '';
+            
+            let filteredItems = menuData.filter(item => {
+                if (currentFilter !== 'all' && item.category !== currentFilter) return false;
+                if (currentSearch && !item.name.toLowerCase().includes(currentSearch)) return false;
+                return true;
+            });
+            
+            if (filteredItems.length === 0) {
+                menuContainer.innerHTML = `
+                    <div class="col-span-3 text-center py-12">
+                        <i class="fas fa-search text-5xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-500">No items found</h3>
+                        <p class="text-gray-400 mt-2">Try adjusting your search or filter criteria</p>
+                    </div>
+                `;
+            } else {
+                filteredItems.forEach((item, index) => {
+                    const discountedPrice = Math.round(item.price * 0.89);
+                    let badges = '';
+                    if (item.popular) {
+                        badges = '<div class="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold">Popular</div>';
+                    }
+                    badges += '<div class="absolute top-4 right-4 bg-green-600 text-white px-3 py-1 rounded-full text-xs font-bold">11% OFF</div>';
+                    
+                    const menuItem = document.createElement('div');
+                    menuItem.className = 'menu-item-card bg-white rounded-2xl shadow-lg overflow-hidden';
+                    menuItem.setAttribute('data-aos', 'fade-up');
+                    menuItem.setAttribute('data-aos-delay', (index % 3) * 100);
+                    menuItem.innerHTML = `
+                        <div class="relative">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='300' viewBox='0 0 600 300'%3E%3Crect width='600' height='300' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18' fill='%236b7280'%3E${item.name}%3C/text%3E%3C/svg%3E" 
+                                 data-src="${item.image}" 
+                                 alt="${item.name}" 
+                                 class="w-full h-48 object-cover lazy-image menu-item-image">
+                            ${badges}
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">${item.name}</h3>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="original-price">NPR ${item.price}</span>
+                                <span class="discounted-price text-lg">NPR ${discountedPrice}</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mb-4">${item.description}</p>
+                            <button onclick="addToCart(${item.id})" class="w-full bg-yellow-400 hover:bg-yellow-500 text-black py-3 px-4 rounded-xl font-semibold transition-all hover:scale-105">
+                                Add to Cart <i class="fas fa-plus ml-1"></i>
+                            </button>
+                        </div>
+                    `;
+                    menuContainer.appendChild(menuItem);
+                });
+            }
+            
+            // Re-initialize lazy loading for new images
+            lazyLoadImages();
+        }
+
+        // Cart functions
+        function addToCart(itemId) {
+            const item = menuData.find(menuItem => menuItem.id === itemId);
+            const existingItem = cart.find(cartItem => cartItem.id === itemId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ id: item.id, name: item.name, price: item.price, quantity: 1 });
+            }
+            
+            updateCartDisplay();
+            showNotification(`${item.name} added to cart!`);
+        }
+
+        function updateCartDisplay() {
+            const cartCount = document.getElementById('cartCount');
+            const cartCountMobile = document.getElementById('cartCountMobile');
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            
+            cartCount.textContent = totalItems;
+            cartCountMobile.textContent = totalItems;
+            localStorage.setItem('mansaraTajCart', JSON.stringify(cart));
+            
+            if (document.getElementById('cartModal').classList.contains('active')) {
+                renderCartItems();
+            }
+        }
+
+        function renderCartItems() {
+            const cartItems = document.getElementById('cartItems');
+            cartItems.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-shopping-cart text-4xl mb-3 text-gray-300"></i>
+                        <p class="text-lg">Your cart is empty</p>
+                        <p class="text-sm mt-2">Add some delicious items to get started!</p>
+                    </div>
+                `;
+            } else {
+                cart.forEach((item, index) => {
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'flex justify-between items-center py-4 border-b';
+                    cartItem.innerHTML = `
+                        <div class="flex-1">
+                            <h4 class="font-semibold">${item.name}</h4>
+                            <div class="flex items-center gap-2">
+                                <span class="text-gray-600 original-price">NPR ${item.price}</span>
+                                <span class="text-green-600 font-semibold">→ NPR ${Math.round(item.price * 0.89)}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button class="quantity-btn w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-red-600 hover:text-white transition" onclick="updateQuantity(${index}, ${item.quantity - 1})">-</button>
+                            <span class="font-semibold">${item.quantity}</span>
+                            <button class="quantity-btn w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-red-600 hover:text-white transition" onclick="updateQuantity(${index}, ${item.quantity + 1})">+</button>
+                            <button class="text-red-500 hover:text-red-700" onclick="removeFromCart(${index})" aria-label="Remove item">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    cartItems.appendChild(cartItem);
+                });
+            }
+            
+            const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            const discount = Math.round(subtotal * 0.11);
+            const total = subtotal - discount;
+            
+            document.getElementById('subtotal').textContent = `NPR ${subtotal}`;
+            document.getElementById('discountAmount').textContent = `-NPR ${discount}`;
+            document.getElementById('total').textContent = `NPR ${total}`;
+        }
+
+        function updateQuantity(index, newQuantity) {
+            if (newQuantity <= 0) {
+                removeFromCart(index);
+            } else {
+                cart[index].quantity = newQuantity;
+                updateCartDisplay();
+            }
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartDisplay();
+        }
+
+        function openCart() {
+            document.getElementById('cartModal').classList.add('active');
+            document.body.classList.add('modal-open');
+            renderCartItems();
+        }
+
+        // ==================== CHECKOUT FLOW ====================
+        
+        async function processCheckout() {
+            if (cart.length === 0) {
+                showNotification('Your cart is empty!', 'error');
+                return;
+            }
+            
+            const customerName = document.getElementById('customerName').value;
+            const customerPhone = document.getElementById('customerPhone').value;
+            const customerAddress = document.getElementById('customerAddress').value;
+            
+            if (!customerName || !customerPhone || !customerAddress) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // Validate phone number
+            const phoneRegex = /^[0-9+\-\s()]{10,}$/;
+            if (!phoneRegex.test(customerPhone)) {
+                showNotification('Please enter a valid phone number', 'error');
+                return;
+            }
+            
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            const originalText = checkoutBtn.innerHTML;
+            checkoutBtn.innerHTML = '<div class="loading-spinner"></div> Processing...';
+            checkoutBtn.disabled = true;
+            
+            const orderId = 'MT' + Date.now().toString().slice(-6);
+            const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            const discount = Math.round(subtotal * 0.11);
+            const total = subtotal - discount;
+            
+            // Create order object
+            const newOrder = {
+                id: orderId,
+                customerName: customerName,
+                phone: customerPhone,
+                address: customerAddress,
+                items: cart.map(item => ({
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity
+                })),
+                subtotal: subtotal,
+                discount: discount,
+                total: total,
+                status: 'pending',
+                timestamp: new Date().toISOString(),
+                notes: document.getElementById('customerNotes').value || '',
+                whatsappSent: true
+            };
+            
+            // Save order locally
+            const currentOrders = JSON.parse(localStorage.getItem('mansaraTajOrders')) || [];
+            currentOrders.unshift(newOrder);
+            localStorage.setItem('mansaraTajOrders', JSON.stringify(currentOrders));
+            
+            // Generate WhatsApp message
+            let orderMessage = "Hello Mansara Taj, I want to place an order:\n\n";
+            newOrder.items.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                const discountedItemTotal = Math.round(itemTotal * 0.89);
+                orderMessage += `${item.name} x ${item.quantity} = NPR ${discountedItemTotal}\n`;
+            });
+            
+            orderMessage += `\nSubtotal: NPR ${subtotal}`;
+            orderMessage += `\n11% Discount: -NPR ${discount}`;
+            orderMessage += `\nTotal: NPR ${total}`;
+            orderMessage += `\n\nOrder ID: ${orderId}`;
+            orderMessage += `\nCustomer Information:\n`;
+            orderMessage += `Name: ${customerName}\n`;
+            orderMessage += `Phone: ${customerPhone}\n`;
+            orderMessage += `Address: ${customerAddress}\n`;
+            
+            if (document.getElementById('customerNotes').value) {
+                orderMessage += `Special Instructions: ${document.getElementById('customerNotes').value}\n`;
+            }
+            
+            orderMessage += "\nPlease confirm my order. Thank you!";
+            
+            // Open WhatsApp with order details
+            const whatsappUrl = `https://wa.me/9779815845376?text=${encodeURIComponent(orderMessage)}`;
+            window.open(whatsappUrl, '_blank');
+            
+            // Close cart modal
+            document.getElementById('cartModal').classList.remove('active');
+            document.body.classList.remove('modal-open');
+            
+            // Reset checkout button
+            checkoutBtn.innerHTML = originalText;
+            checkoutBtn.disabled = false;
+            
+            // Clear cart and form
+            cart = [];
+            updateCartDisplay();
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerPhone').value = '';
+            document.getElementById('customerAddress').value = '';
+            document.getElementById('customerNotes').value = '';
+            
+            // Show order success modal after a short delay
+            setTimeout(() => {
+                showOrderSuccess(orderId);
+            }, 1000);
+        }
+
+        // ==================== CLOUD SYNC FUNCTIONS ====================
+        const JSONBIN_CONFIG = {
+            BIN_ID: '68f0b56b43b1c97be96aee74',
+            API_KEY: '$2a$10$PAVuboENhJZw2YHFfJhiuuNqatCmpYi4aDXdeBdcqk/2aX9ZEZc5m',
+            BASE_URL: 'https://api.jsonbin.io/v3/b'
+        };
+
+        async function syncWithCloud() {
+            showSyncIndicator('Syncing orders...', 'syncing');
+            
+            try {
+                const localOrders = JSON.parse(localStorage.getItem('mansaraTajOrders')) || [];
+                const cloudData = await getDataFromCloud();
+                const cloudOrders = cloudData?.orders || [];
+                
+                const mergedOrders = mergeOrders(localOrders, cloudOrders);
+                localStorage.setItem('mansaraTajOrders', JSON.stringify(mergedOrders));
+                
+                if (JSON.stringify(mergedOrders) !== JSON.stringify(cloudOrders)) {
+                    await saveDataToCloud({
+                        orders: mergedOrders,
+                        restaurant: "Mansara Taj Pokhara",
+                        lastSync: new Date().toISOString(),
+                        totalOrders: mergedOrders.length
+                    });
+                    showSyncIndicator(`${mergedOrders.length} orders synced`, 'success');
+                } else {
+                    showSyncIndicator('Already up to date', 'success');
+                }
+                
+                return mergedOrders;
+                
+            } catch (error) {
+                console.error('Cloud sync failed:', error);
+                showSyncIndicator('Sync failed', 'error');
+                return JSON.parse(localStorage.getItem('mansaraTajOrders')) || [];
+            }
+        }
+
+        async function getDataFromCloud() {
+            try {
+                const response = await fetch(`${JSONBIN_CONFIG.BASE_URL}/${JSONBIN_CONFIG.BIN_ID}/latest`, {
+                    headers: {
+                        'X-Master-Key': JSONBIN_CONFIG.API_KEY
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Failed to fetch from cloud');
+                
+                const data = await response.json();
+                return data.record;
+            } catch (error) {
+                console.warn('Could not fetch from cloud:', error);
+                return null;
+            }
+        }
+
+        async function saveDataToCloud(data) {
+            try {
+                const response = await fetch(`${JSONBIN_CONFIG.BASE_URL}/${JSONBIN_CONFIG.BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'X-Master-Key': JSONBIN_CONFIG.API_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) throw new Error('Failed to save to cloud');
+                
+                return await response.json();
+            } catch (error) {
+                console.error('Failed to save to cloud:', error);
+                throw error;
+            }
+        }
+
+        function mergeOrders(localOrders, cloudOrders) {
+            const orderMap = new Map();
+            
+            cloudOrders.forEach(order => {
+                if (order.id) orderMap.set(order.id, order);
+            });
+            
+            localOrders.forEach(order => {
+                if (order.id && !orderMap.has(order.id)) {
+                    orderMap.set(order.id, order);
+                }
+            });
+            
+            return Array.from(orderMap.values()).sort((a, b) => 
+                new Date(b.timestamp) - new Date(a.timestamp)
+            );
+        }
+
+        function showSyncIndicator(message, type = 'syncing') {
+            const indicator = document.getElementById('syncIndicator');
+            const messageEl = document.getElementById('syncMessage');
+            
+            messageEl.textContent = message;
+            indicator.className = 'sync-indicator show';
+            
+            if (type === 'success') {
+                indicator.style.background = '#10b981';
+            } else if (type === 'error') {
+                indicator.style.background = '#ef4444';
+            } else {
+                indicator.style.background = '#f59e0b';
+            }
+            
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 3000);
+        }
+
+        // ==================== ORDER TRACKING ====================
+        async function checkOrderStatus() {
+            const orderIdInput = document.getElementById('orderIdInput');
+            const orderId = orderIdInput.value.trim();
+            const orderStatus = document.getElementById('orderStatus');
+            const orderDetails = document.getElementById('orderDetails');
+            
+            if (!orderId) {
+                showNotification('Please enter your order ID', 'error');
+                return;
+            }
+            
+            const checkOrderBtn = document.getElementById('checkOrderBtn');
+            const originalText = checkOrderBtn.innerHTML;
+            checkOrderBtn.innerHTML = '<div class="loading-spinner"></div> Checking...';
+            checkOrderBtn.disabled = true;
+            
+            try {
+                const orders = await syncWithCloud();
+                const order = orders.find(o => o.id === orderId);
+                
+                setTimeout(() => {
+                    checkOrderBtn.innerHTML = originalText;
+                    checkOrderBtn.disabled = false;
+                    
+                    if (order) {
+                        displayOrderDetails(order, orderDetails);
+                    } else {
+                        showOrderNotFound(orderDetails);
+                    }
+                    
+                    orderStatus.classList.add('active');
+                }, 1000);
+                
+            } catch (error) {
+                checkOrderBtn.innerHTML = originalText;
+                checkOrderBtn.disabled = false;
+                showNotification('Failed to check order status', 'error');
+            }
+        }
+
+        function displayOrderDetails(order, orderDetails) {
+            const itemsHtml = order.items.map(item => 
+                `<div class="flex justify-between text-sm py-1">
+                    <span>${item.name} x ${item.quantity}</span>
+                    <span>NPR ${Math.round(item.price * item.quantity * 0.89)}</span>
+                </div>`
+            ).join('');
+            
+            const statusText = getStatusText(order.status);
+            const statusClass = `status-${order.status}`;
+            
+            orderDetails.innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span><strong>Order ID:</strong> ${order.id}</span>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </div>
+                    <div><strong>Customer:</strong> ${order.customerName}</div>
+                    <div><strong>Phone:</strong> ${order.phone}</div>
+                    <div><strong>Address:</strong> ${order.address}</div>
+                    <div class="border-t pt-2">
+                        <strong>Order Items:</strong>
+                        ${itemsHtml}
+                        <div class="flex justify-between font-bold border-t mt-2 pt-2">
+                            <span>Total:</span>
+                            <span>NPR ${order.total}</span>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <strong>Order Time:</strong> ${formatOrderTime(order.timestamp)}
+                    </div>
+                    <div class="mt-4 p-3 bg-blue-50 rounded-lg text-sm">
+                        <i class="fas fa-info-circle mr-2 text-blue-500"></i>
+                        ${getStatusMessage(order.status)}
+                    </div>
+                </div>
+            `;
+        }
+
+        function showOrderNotFound(orderDetails) {
+            orderDetails.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="fas fa-search text-3xl text-gray-300 mb-2"></i>
+                    <p class="text-gray-600">Order not found</p>
+                    <p class="text-sm text-gray-500 mt-1">Please check your order ID</p>
+                </div>
+            `;
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': 'Pending', 'preparing': 'Preparing', 'ready': 'Ready for Delivery',
+                'delivered': 'Delivered', 'cancelled': 'Cancelled'
+            };
+            return statusMap[status] || status;
+        }
+
+        function getStatusMessage(status) {
+            const messages = {
+                'pending': 'Your order has been received and is waiting to be confirmed. Please make sure you have sent the WhatsApp message.',
+                'preparing': 'Your order is being prepared in our kitchen. Estimated delivery time: 30-45 minutes.',
+                'ready': 'Your order is ready and will be delivered soon. Please be available to receive your order.',
+                'delivered': 'Your order has been delivered. Thank you for choosing Mansara Taj!',
+                'cancelled': 'This order has been cancelled. Please contact us if you have any questions.'
+            };
+            return messages[status] || 'Checking order status...';
+        }
+
+        function formatOrderTime(timestamp) {
+            return new Date(timestamp).toLocaleString('en-US', {
+                year: 'numeric', month: 'short', day: 'numeric',
+                hour: '2-digit', minute: '2-digit', hour12: true
+            });
+        }
+
         // Make functions globally available for onclick handlers
         window.addToCart = addToCart;
         window.updateQuantity = updateQuantity;
         window.removeFromCart = removeFromCart;
+        window.copyOrderId = copyOrderId;
     </script>
 </body>
 </html>
